@@ -144,6 +144,11 @@ Salesforce Certified Technical Architect (CTA) · Salesforce MVP (Class of 2025)
 - Website: [cramm.dev](https://cramm.dev)
 - GitHub: [@rammc](https://github.com/rammc)
 
+## Disclaimer
+
+Built with AI assistance
+This repository was developed with support from AI tools (Claude by Anthropic) for code generation, documentation, and architecture documentation. All content has been reviewed, validated, and curated by the author. The architectural decisions, patterns, and recommendations reflect real-world enterprise experience.
+
 ## License
 
 [MIT](LICENSE) — use it, fork it, build on it.
