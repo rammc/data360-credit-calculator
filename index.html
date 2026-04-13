@@ -95,14 +95,33 @@
     }
     .select option { background: #1a1f2e; color: var(--text); }
 
-    /* Top bar: use case + test params */
+    /* Intro */
+    .intro {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px 24px; margin-bottom: 32px;
+      font-family: var(--font-body); font-size: 13px; line-height: 1.7;
+      color: var(--text-muted);
+    }
+    .intro p { margin-bottom: 8px; }
+    .intro p:last-child { margin-bottom: 0; }
+    .intro strong { color: var(--text); font-weight: 600; }
+
+    /* Top bar: use case + cost + test params */
     .top-bar {
-      display: grid; grid-template-columns: 1fr 110px 110px;
+      display: grid; grid-template-columns: 1fr 220px 110px 110px;
       gap: 16px; margin-bottom: 32px; align-items: end;
+    }
+    .cost-group { display: flex; }
+    .cost-group .select {
+      width: 76px; flex-shrink: 0;
+      border-radius: var(--radius-sm) 0 0 var(--radius-sm);
+      border-right: none;
+    }
+    .cost-group .input {
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
     }
     @media (max-width: 640px) {
       .top-bar { grid-template-columns: 1fr; }
-      .top-bar-tests { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     }
 
     /* Cards */
@@ -261,7 +280,14 @@ const FREQS = [
 
 const CATEGORIES = ["Connect & Unify","Analyze & Predict","Segmentation & Activation","Act"];
 const COLORS = ["#00d2d2","#0088ff","#7c4dff","#ff6b9d","#ffb74d","#4caf50","#e040fb","#ff5252","#40c4ff","#8d6e63"];
-const COST_PER_100K = 500;
+
+const CURRENCIES = [
+  { label:"USD ($)", symbol:"$" },
+  { label:"EUR (\u20ac)", symbol:"\u20ac" },
+  { label:"GBP (\u00a3)", symbol:"\u00a3" },
+  { label:"CHF (CHF)", symbol:"CHF " },
+  { label:"JPY (\u00a5)", symbol:"\u00a5" },
+];
 
 /* ── Formatters ────────────────────────────────────────── */
 
@@ -271,9 +297,9 @@ function fmtCr(n) {
   if (n >= 1e3) return (n/1e3).toFixed(1)+"K";
   return n.toFixed(1);
 }
-function fmtCost(n) {
+function fmtCost(n, sym) {
   if (!n) return "\u2013";
-  return "$"+Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  return (sym||"$")+Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 /* ── Components ────────────────────────────────────────── */
@@ -368,9 +394,11 @@ function BreakdownBar(props) {
 /* ── Main App ──────────────────────────────────────────── */
 
 function App() {
-  var _uc = React.useState(""), useCaseName = _uc[0], setUseCaseName = _uc[1];
-  var _tv = React.useState(5),  testVol = _tv[0],      setTestVol = _tv[1];
-  var _tr = React.useState(10), testRuns = _tr[0],      setTestRuns = _tr[1];
+  var _uc = React.useState(""),  useCaseName = _uc[0],  setUseCaseName = _uc[1];
+  var _cp = React.useState(500), costPer100K = _cp[0],  setCostPer100K = _cp[1];
+  var _cu = React.useState("$"), currency = _cu[0],     setCurrency = _cu[1];
+  var _tv = React.useState(5),   testVol = _tv[0],      setTestVol = _tv[1];
+  var _tr = React.useState(10),  testRuns = _tr[0],     setTestRuns = _tr[1];
 
   var initStates = {};
   RATE_CARD.forEach(function(rc){ initStates[rc.id] = { active:false, volume:1000000, freq:365, growth:0.05 }; });
@@ -404,11 +432,11 @@ function App() {
       var y2 = y1 * (1 + st.growth);
       var y3 = y2 * (1 + st.growth);
       var cr = [y1,y2,y3].map(function(v){ return (v/1e6)*rc.rate; });
-      var co = cr.map(function(c){ return (c/1e5)*COST_PER_100K; });
+      var co = cr.map(function(c){ return (c/1e5)*costPer100K; });
       results.push({ name:rc.name, cat:rc.cat, credits:cr, costs:co });
     });
     return results;
-  }, [usages, testVol, testRuns]);
+  }, [usages, testVol, testRuns, costPer100K]);
 
   var totals = React.useMemo(function() {
     var t = { credits:[0,0,0], costs:[0,0,0] };
@@ -436,6 +464,18 @@ function App() {
 
     e("div", { className:"container" },
 
+      /* Intro */
+      e("div", { className:"intro" },
+        e("p", null,
+          e("strong", null, "Purpose: "),
+          "This calculator estimates credit consumption and associated costs for Salesforce Data 360 use cases. It is based on the official Data Services Rate Card and helps architects, consultants, and business users plan and budget Data 360 implementations."
+        ),
+        e("p", null,
+          e("strong", null, "How to use: "),
+          "Select the usage types relevant to your use case, configure volume, frequency, and expected YoY growth. The calculator projects credit consumption and costs over three years. You can adjust the cost per 100K credits and currency to match your negotiated contract rate \u2014 the Salesforce list price is $500."
+        )
+      ),
+
       /* Top bar */
       e("div", { className:"top-bar" },
         e("div", null,
@@ -445,6 +485,17 @@ function App() {
             value:useCaseName, onChange:function(ev){ setUseCaseName(ev.target.value); },
             style:{ fontSize:15 }
           })
+        ),
+        e("div", null,
+          e("label", { className:"label" }, "Cost per 100K Credits"),
+          e("div", { className:"cost-group" },
+            e("select", {
+              className:"select", value:currency,
+              onChange:function(ev){ setCurrency(ev.target.value); }
+            }, CURRENCIES.map(function(c){ return e("option",{key:c.symbol,value:c.symbol},c.label); })),
+            e("input", { type:"number", className:"input", value:costPer100K, min:0,
+              onChange:function(ev){ setCostPer100K(Number(ev.target.value)); } })
+          )
         ),
         e("div", null,
           e("label", { className:"label" }, "Test Volume %"),
@@ -459,7 +510,7 @@ function App() {
       /* Summary cards */
       e("div", { className:"summary-grid" },
         e(SummaryCard, { label:"Total Credits", vals:totals.credits, fmt:fmtCr, accent:"linear-gradient(90deg,#00d2d2,#0088ff)" }),
-        e(SummaryCard, { label:"Total Cost (at $500 / 100K credits)", vals:totals.costs, fmt:fmtCost, accent:"linear-gradient(90deg,#0088ff,#7c4dff)" })
+        e(SummaryCard, { label:"Total Cost (at "+currency+costPer100K.toLocaleString()+" / 100K credits)", vals:totals.costs, fmt:function(n){ return fmtCost(n, currency); }, accent:"linear-gradient(90deg,#0088ff,#7c4dff)" })
       ),
 
       /* Breakdown */
@@ -512,13 +563,13 @@ function App() {
                 return e("tr", { key:r.name },
                   e("td", { className:"name" }, r.name),
                   r.credits.map(function(c,i){ return e("td",{key:"c"+i,className:"right accent"},fmtCr(c)); }),
-                  r.costs.map(function(c,i){ return e("td",{key:"$"+i,className:"right"},fmtCost(c)); })
+                  r.costs.map(function(c,i){ return e("td",{key:"$"+i,className:"right"},fmtCost(c,currency)); })
                 );
               }),
               e("tr", { className:"total" },
                 e("td", { className:"name" }, "Total"),
                 totals.credits.map(function(c,i){ return e("td",{key:"tc"+i,className:"right accent"},fmtCr(c)); }),
-                totals.costs.map(function(c,i){ return e("td",{key:"t$"+i,className:"right"},fmtCost(c)); })
+                totals.costs.map(function(c,i){ return e("td",{key:"t$"+i,className:"right"},fmtCost(c,currency)); })
               )
             )
           )
@@ -556,7 +607,7 @@ function App() {
       e("div", { className:"footer" },
         e("div", { style:{ marginBottom:8 } },
           e("strong", null, "Disclaimer: "),
-          "This calculator provides estimates based on the official Salesforce Data Services Rate Card (last updated August 2025). Actual consumption may vary. Salesforce ingestion from native connectors (Sales Cloud, Service Cloud, Marketing Cloud Engagement, Marketing Cloud Personalization, Commerce Cloud) is free since September 2025. Always verify contractual rates with your Salesforce Account Executive."
+          "This calculator provides estimates based on the official Salesforce Data Services Rate Card (last updated August 2025). Actual consumption may vary. The cost per 100K credits and currency can be adjusted to match your negotiated contract rate. Salesforce ingestion from native connectors (Sales Cloud, Service Cloud, Marketing Cloud Engagement, Marketing Cloud Personalization, Commerce Cloud) is free since September 2025. Always verify contractual rates with your Salesforce Account Executive."
         ),
         e("div", null,
           "Built by ",
