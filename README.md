@@ -132,6 +132,10 @@ Common contributions that would be valuable:
 
 ## Author
 
+**Annika Schühle**
+Consultant: Customer Data & Tech · Capgemini Invent
+**Annika Schühle**
+Senior Manager Customer Data & Tech · Capgemini Invent
 **Christopher Ramm**
 Salesforce Certified Technical Architect (CTA) · Salesforce MVP (Class of 2025) · DCX CTO Germany @ Capgemini
 
