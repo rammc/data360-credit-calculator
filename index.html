@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Data 360 Credit Calculator</title>
+  <meta name="description" content="Open-source Salesforce Data 360 (formerly Data Cloud) credit consumption estimator. Based on the official Data Services Rate Card." />
+  <meta name="author" content="Christopher Ramm" />
+  <meta property="og:title" content="Data 360 Credit Calculator" />
+  <meta property="og:description" content="Estimate Salesforce Data 360 credit consumption and costs for your use cases." />
+  <meta property="og:type" content="website" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0e17;
+      --surface: rgba(255,255,255,0.03);
+      --surface-hover: rgba(255,255,255,0.05);
+      --border: rgba(255,255,255,0.08);
+      --border-subtle: rgba(255,255,255,0.04);
+      --text: #e8eaed;
+      --text-muted: rgba(255,255,255,0.45);
+      --text-faint: rgba(255,255,255,0.3);
+      --text-ghost: rgba(255,255,255,0.15);
+      --accent: #00d2d2;
+      --accent-muted: rgba(0,210,210,0.6);
+      --accent-bg: rgba(0,210,210,0.08);
+      --accent-border: rgba(0,210,210,0.2);
+      --blue: #0088ff;
+      --purple: #7c4dff;
+      --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg);
+      background-image:
+        radial-gradient(ellipse at 20% 0%, rgba(0,210,210,0.05) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 100%, rgba(0,136,255,0.03) 0%, transparent 50%);
+      color: var(--text);
+      line-height: 1.5;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    .container { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+
+    /* Header */
+    .header {
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 28px 0;
+      margin-bottom: 36px;
+    }
+    .header-inner { display: flex; align-items: center; gap: 14; }
+    .logo {
+      width: 38px; height: 38px; border-radius: 10px;
+      background: linear-gradient(135deg, var(--accent), var(--blue));
+      display: flex; align-items: center; justify-content: center;
+      font: 700 15px/1 var(--font-mono); color: var(--bg); flex-shrink: 0;
+    }
+    .header h1 {
+      font-size: 22px; font-weight: 700; letter-spacing: -0.03em;
+      background: linear-gradient(90deg, var(--text), rgba(255,255,255,0.65));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    }
+    .header .subtitle { font-size: 12px; color: var(--text-faint); margin-top: 2px; }
+
+    /* Labels & Inputs */
+    .label {
+      display: block; font-size: 11px; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.06em; font-weight: 500;
+      margin-bottom: 5px;
+    }
+    .input, .select {
+      width: 100%; background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm);
+      padding: 9px 12px; color: var(--text);
+      font: 13px/1.4 var(--font-mono); outline: none;
+      transition: border-color 0.2s;
+    }
+    .input:focus, .select:focus { border-color: var(--accent); }
+    .input::placeholder { color: var(--text-ghost); }
+    .select { cursor: pointer; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center;
+      padding-right: 30px;
+    }
+    .select option { background: #1a1f2e; color: var(--text); }
+
+    /* Top bar: use case + test params */
+    .top-bar {
+      display: grid; grid-template-columns: 1fr 110px 110px;
+      gap: 16px; margin-bottom: 32px; align-items: end;
+    }
+    @media (max-width: 640px) {
+      .top-bar { grid-template-columns: 1fr; }
+      .top-bar-tests { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    }
+
+    /* Cards */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; padding: 20px 22px; position: relative; overflow: hidden;
+    }
+    .card-accent {
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    }
+    .card-label {
+      font-size: 11px; color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: 0.08em; font-weight: 500; margin-bottom: 14px;
+    }
+    .card-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+    .card-year { font-size: 10px; color: var(--text-faint); margin-bottom: 4px; }
+    .card-value {
+      font: 600 18px/1.2 var(--font-mono); color: var(--text); letter-spacing: -0.02em;
+    }
+    .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+    @media (max-width: 640px) { .summary-grid { grid-template-columns: 1fr; } }
+
+    /* Distribution bar */
+    .dist-bar { display: flex; border-radius: 6px; overflow: hidden; height: 28px; margin-bottom: 10px; }
+    .dist-bar > div { transition: width 0.5s ease; min-width: 0; }
+    .dist-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; }
+    .dist-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); }
+    .dist-legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+    .dist-legend-val { font-family: var(--font-mono); color: rgba(255,255,255,0.65); }
+
+    /* Category heading */
+    .cat-heading {
+      font-size: 11px; font-weight: 600; color: var(--accent-muted);
+      text-transform: uppercase; letter-spacing: 0.1em;
+      margin-bottom: 10px; padding-left: 2px;
+    }
+
+    /* Usage row */
+    .usage-row {
+      border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius);
+      padding: 16px 20px; margin-bottom: 10px; transition: all 0.3s ease;
+    }
+    .usage-row.active {
+      background: rgba(0,210,210,0.04); border-color: var(--accent-border);
+      opacity: 1;
+    }
+    .usage-row:not(.active) { opacity: 0.5; }
+    .usage-header { display: flex; align-items: center; gap: 12px; }
+    .usage-name { font-weight: 600; font-size: 14px; color: var(--text); letter-spacing: -0.01em; }
+    .usage-desc { font-size: 11px; color: var(--text-faint); margin-top: 2px; }
+    .usage-badge {
+      font: 12px/1 var(--font-mono); color: var(--accent-muted);
+      background: var(--accent-bg); padding: 4px 10px;
+      border-radius: 6px; white-space: nowrap; flex-shrink: 0;
+    }
+    .usage-params {
+      display: grid; grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px; margin-top: 14px;
+    }
+    @media (max-width: 640px) { .usage-params { grid-template-columns: 1fr; } }
+
+    /* Toggle */
+    .toggle {
+      width: 42px; height: 24px; border-radius: 12px; border: none;
+      cursor: pointer; position: relative; transition: background 0.2s;
+      flex-shrink: 0; background: rgba(255,255,255,0.12);
+    }
+    .toggle.on { background: var(--accent); }
+    .toggle-dot {
+      width: 18px; height: 18px; border-radius: 9px; background: #fff;
+      position: absolute; top: 3px; left: 3px; transition: left 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+    .toggle.on .toggle-dot { left: 21px; }
+
+    /* Table */
+    .table { width: 100%; border-collapse: collapse; font-family: var(--font-mono); font-size: 12px; }
+    .table th {
+      text-align: left; padding: 8px 12px; font-family: var(--font-body);
+      font-size: 10px; color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: 0.06em; font-weight: 600;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    .table th.right, .table td.right { text-align: right; }
+    .table td { padding: 10px 12px; color: rgba(255,255,255,0.7); border-bottom: 1px solid var(--border-subtle); }
+    .table td.name { font-family: var(--font-body); font-weight: 500; }
+    .table td.accent { color: rgba(0,210,210,0.8); }
+    .table tr.total td { border-top: 2px solid rgba(255,255,255,0.15); font-weight: 700; border-bottom: none; }
+    .table tr.total td.accent { color: var(--accent); }
+
+    /* Section heading */
+    .section-title {
+      font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.6);
+      letter-spacing: -0.01em; margin: 0 0 6px 0;
+    }
+    .section-sub { font-size: 12px; color: var(--text-faint); margin-bottom: 20px; }
+
+    /* Footer */
+    .footer {
+      margin-top: 40px; padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      font-size: 12px; color: var(--text-faint); line-height: 1.7;
+    }
+    .footer strong { color: var(--text-muted); }
+    .footer a { color: var(--accent); text-decoration: none; }
+    .footer a:hover { text-decoration: underline; }
+    .footer .tm { margin-top: 4px; font-size: 11px; color: var(--text-ghost); }
+
+    /* Percent suffix */
+    .pct-wrap { position: relative; }
+    .pct-wrap .pct-sign {
+      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+      color: var(--text-faint); font: 12px var(--font-mono); pointer-events: none;
+    }
+    .pct-wrap .input { padding-right: 28px; }
+
+    /* Responsive table scroll */
+    .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  </style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+
+<script>
+"use strict";
+const e = React.createElement;
+
+/* ── Data ──────────────────────────────────────────────── */
+
+const RATE_CARD = [
+  { id:"ext_pipeline",        name:"(External) Data Pipeline",          rate:2000,   unit:"Per 1M Rows (Batch)", cat:"Connect & Unify",           desc:"Ingest data from external (non-Salesforce) sources" },
+  { id:"profile_unification", name:"Profile Unification",               rate:100000, unit:"Per 1M Rows",         cat:"Connect & Unify",           desc:"Identity resolution to unify customer profiles" },
+  { id:"batch_ci",            name:"Batch Calculated Insights",         rate:15,     unit:"Per 1M Rows",         cat:"Analyze & Predict",         desc:"Computes metrics and insights from batch data" },
+  { id:"streaming_ci",        name:"Streaming Calculated Insights",     rate:800,    unit:"Per 1M Rows",         cat:"Analyze & Predict",         desc:"Computes metrics and insights from streaming data in real-time" },
+  { id:"inferences",          name:"Inferences",                        rate:3500,   unit:"Per 1M Inferences",   cat:"Analyze & Predict",         desc:"Uses AI/ML to derive insights and predictions from data" },
+  { id:"segmentation",        name:"Segmentation",                      rate:20,     unit:"Per 1M Rows",         cat:"Segmentation & Activation", desc:"Divides data into segments based on defined criteria" },
+  { id:"batch_activation",    name:"Batch Activation",                  rate:10,     unit:"Per 1M Rows",         cat:"Segmentation & Activation", desc:"Activates segmented data for marketing and other applications" },
+  { id:"activate_dmo",        name:"Activate DMO – Streaming",          rate:1600,   unit:"Per 1M Rows",         cat:"Segmentation & Activation", desc:"Activates Data Model Objects via streaming" },
+  { id:"streaming_actions",   name:"Streaming Actions (incl. Lookups)", rate:800,    unit:"Per 1M Rows",         cat:"Act",                       desc:"Executes actions, workflows, and lookups on streaming events" },
+  { id:"data_queries",        name:"Data Queries",                      rate:2,      unit:"Per 1M Rows",         cat:"Act",                       desc:"Executes SQL-like queries on data within Data 360" },
+];
+
+const FREQS = [
+  { label:"Daily",     v:365 },
+  { label:"Bi-Daily",  v:730 },
+  { label:"Weekly",    v:52  },
+  { label:"Monthly",   v:12  },
+  { label:"Quarterly", v:4   },
+  { label:"Yearly",    v:1   },
+  { label:"One-Time",  v:1   },
+];
+
+const CATEGORIES = ["Connect & Unify","Analyze & Predict","Segmentation & Activation","Act"];
+const COLORS = ["#00d2d2","#0088ff","#7c4dff","#ff6b9d","#ffb74d","#4caf50","#e040fb","#ff5252","#40c4ff","#8d6e63"];
+const COST_PER_100K = 500;
+
+/* ── Formatters ────────────────────────────────────────── */
+
+function fmtCr(n) {
+  if (!n) return "\u2013";
+  if (n >= 1e6) return (n/1e6).toFixed(2)+"M";
+  if (n >= 1e3) return (n/1e3).toFixed(1)+"K";
+  return n.toFixed(1);
+}
+function fmtCost(n) {
+  if (!n) return "\u2013";
+  return "$"+Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+/* ── Components ────────────────────────────────────────── */
+
+function Toggle(props) {
+  var cls = "toggle" + (props.on ? " on" : "");
+  return e("button", { className:cls, onClick:props.onClick, "aria-label":"Toggle" },
+    e("div", { className:"toggle-dot" })
+  );
+}
+
+function UsageRow(props) {
+  var rc = props.rc, st = props.state, active = st.active;
+  return e("div", { className: "usage-row" + (active ? " active" : "") },
+    e("div", { className:"usage-header" },
+      e(Toggle, { on:active, onClick:function(){ props.onToggle(rc.id); } }),
+      e("div", { style:{ flex:1 } },
+        e("div", { className:"usage-name" }, rc.name),
+        e("div", { className:"usage-desc" }, rc.desc)
+      ),
+      e("div", { className:"usage-badge" }, rc.rate.toLocaleString()+" cr / "+rc.unit.replace("Per ",""))
+    ),
+    active && e("div", { className:"usage-params" },
+      e("div", null,
+        e("label", { className:"label" }, "Volume per execution"),
+        e("input", {
+          type:"number", className:"input", value:st.volume,
+          onChange:function(ev){ props.onChange(rc.id,"volume",Number(ev.target.value)); }
+        })
+      ),
+      e("div", null,
+        e("label", { className:"label" }, "Frequency"),
+        e("select", {
+          className:"select", value:st.freq,
+          onChange:function(ev){ props.onChange(rc.id,"freq",Number(ev.target.value)); }
+        }, FREQS.map(function(f){ return e("option",{key:f.label,value:f.v},f.label+" ("+f.v+"/yr)"); }))
+      ),
+      e("div", null,
+        e("label", { className:"label" }, "YoY Growth"),
+        e("div", { className:"pct-wrap" },
+          e("input", {
+            type:"number", className:"input", value:Math.round(st.growth*100), step:1,
+            onChange:function(ev){ props.onChange(rc.id,"growth",Number(ev.target.value)/100); }
+          }),
+          e("span", { className:"pct-sign" }, "%")
+        )
+      )
+    )
+  );
+}
+
+function SummaryCard(props) {
+  return e("div", { className:"card" },
+    e("div", { className:"card-accent", style:{ background:props.accent } }),
+    e("div", { className:"card-label" }, props.label),
+    e("div", { className:"card-grid" },
+      ["Year 1","Year 2","Year 3"].map(function(yr, i){
+        return e("div", { key:yr },
+          e("div", { className:"card-year" }, yr),
+          e("div", { className:"card-value" }, props.fmt(props.vals[i]))
+        );
+      })
+    )
+  );
+}
+
+function BreakdownBar(props) {
+  var data = props.data;
+  var total = data.reduce(function(s,d){ return s + d.credits[0]; }, 0);
+  if (!total) return null;
+  return e("div", null,
+    e("div", { className:"dist-bar" },
+      data.filter(function(d){ return d.credits[0]>0; }).map(function(d,i){
+        return e("div", {
+          key:d.name, title:d.name+": "+fmtCr(d.credits[0])+" credits",
+          style:{ width:(d.credits[0]/total*100)+"%", background:COLORS[i%COLORS.length] }
+        });
+      })
+    ),
+    e("div", { className:"dist-legend" },
+      data.filter(function(d){ return d.credits[0]>0; }).map(function(d,i){
+        return e("div", { key:d.name, className:"dist-legend-item" },
+          e("div", { className:"dist-legend-dot", style:{ background:COLORS[i%COLORS.length] } }),
+          e("span", null, d.name+" "),
+          e("span", { className:"dist-legend-val" }, fmtCr(d.credits[0]))
+        );
+      })
+    )
+  );
+}
+
+/* ── Main App ──────────────────────────────────────────── */
+
+function App() {
+  var _uc = React.useState(""), useCaseName = _uc[0], setUseCaseName = _uc[1];
+  var _tv = React.useState(5),  testVol = _tv[0],      setTestVol = _tv[1];
+  var _tr = React.useState(10), testRuns = _tr[0],      setTestRuns = _tr[1];
+
+  var initStates = {};
+  RATE_CARD.forEach(function(rc){ initStates[rc.id] = { active:false, volume:1000000, freq:365, growth:0.05 }; });
+  var _us = React.useState(initStates), usages = _us[0], setUsages = _us[1];
+
+  function toggle(id) {
+    setUsages(function(prev) {
+      var next = Object.assign({}, prev);
+      next[id] = Object.assign({}, next[id], { active: !next[id].active });
+      return next;
+    });
+  }
+  function change(id, field, val) {
+    setUsages(function(prev) {
+      var next = Object.assign({}, prev);
+      var upd = {}; upd[field] = val;
+      next[id] = Object.assign({}, next[id], upd);
+      return next;
+    });
+  }
+
+  var calcs = React.useMemo(function() {
+    var results = [];
+    var tf = testVol / 100;
+    RATE_CARD.forEach(function(rc) {
+      var st = usages[rc.id];
+      if (!st || !st.active) return;
+      var base = st.volume * st.freq;
+      var test = st.volume * tf * testRuns;
+      var y1 = base + test;
+      var y2 = y1 * (1 + st.growth);
+      var y3 = y2 * (1 + st.growth);
+      var cr = [y1,y2,y3].map(function(v){ return (v/1e6)*rc.rate; });
+      var co = cr.map(function(c){ return (c/1e5)*COST_PER_100K; });
+      results.push({ name:rc.name, cat:rc.cat, credits:cr, costs:co });
+    });
+    return results;
+  }, [usages, testVol, testRuns]);
+
+  var totals = React.useMemo(function() {
+    var t = { credits:[0,0,0], costs:[0,0,0] };
+    calcs.forEach(function(r) {
+      for (var i=0;i<3;i++) { t.credits[i]+=r.credits[i]; t.costs[i]+=r.costs[i]; }
+    });
+    return t;
+  }, [calcs]);
+
+  var activeCount = Object.keys(usages).filter(function(k){ return usages[k].active; }).length;
+
+  return e("div", null,
+    /* Header */
+    e("div", { className:"header" },
+      e("div", { className:"container" },
+        e("div", { className:"header-inner" },
+          e("div", { className:"logo" }, "D3"),
+          e("div", null,
+            e("h1", null, "Data 360 Credit Calculator"),
+            e("div", { className:"subtitle" }, "Based on official Salesforce Data Services Rate Card (Aug 2025) \u00b7 v2.0")
+          )
+        )
+      )
+    ),
+
+    e("div", { className:"container" },
+
+      /* Top bar */
+      e("div", { className:"top-bar" },
+        e("div", null,
+          e("label", { className:"label" }, "Use Case Name"),
+          e("input", {
+            type:"text", className:"input", placeholder:"e.g. Customer 360 Segmentation",
+            value:useCaseName, onChange:function(ev){ setUseCaseName(ev.target.value); },
+            style:{ fontSize:15 }
+          })
+        ),
+        e("div", null,
+          e("label", { className:"label" }, "Test Volume %"),
+          e("input", { type:"number", className:"input", value:testVol, onChange:function(ev){ setTestVol(Number(ev.target.value)); } })
+        ),
+        e("div", null,
+          e("label", { className:"label" }, "Test Runs / Year"),
+          e("input", { type:"number", className:"input", value:testRuns, onChange:function(ev){ setTestRuns(Number(ev.target.value)); } })
+        )
+      ),
+
+      /* Summary cards */
+      e("div", { className:"summary-grid" },
+        e(SummaryCard, { label:"Total Credits", vals:totals.credits, fmt:fmtCr, accent:"linear-gradient(90deg,#00d2d2,#0088ff)" }),
+        e(SummaryCard, { label:"Total Cost (at $500 / 100K credits)", vals:totals.costs, fmt:fmtCost, accent:"linear-gradient(90deg,#0088ff,#7c4dff)" })
+      ),
+
+      /* Breakdown */
+      calcs.length > 0 && e("div", { className:"card", style:{ marginBottom:36 } },
+        e("div", { className:"card-label" }, "Credit Distribution \u2013 Year 1"),
+        e(BreakdownBar, { data:calcs })
+      ),
+
+      /* Section heading */
+      e("h2", { className:"section-title" }, "Usage Types"),
+      e("div", { className:"section-sub" },
+        activeCount > 0
+          ? "Toggle usage types relevant to your use case. "+activeCount+" active."
+          : "Toggle usage types relevant to your use case to get started."
+      ),
+
+      /* Usage types by category */
+      CATEGORIES.map(function(cat) {
+        var items = RATE_CARD.filter(function(rc){ return rc.cat===cat; });
+        if (!items.length) return null;
+        return e("div", { key:cat, style:{ marginBottom:24 } },
+          e("div", { className:"cat-heading" }, cat),
+          items.map(function(rc) {
+            return e(UsageRow, {
+              key:rc.id, rc:rc, state:usages[rc.id],
+              onToggle:toggle, onChange:change
+            });
+          })
+        );
+      }),
+
+      /* Detailed breakdown table */
+      calcs.length > 0 && e("div", { className:"card", style:{ marginTop:36 } },
+        e("div", { className:"card-label" }, "Detailed Breakdown"),
+        e("div", { className:"table-wrap" },
+          e("table", { className:"table" },
+            e("thead", null,
+              e("tr", null,
+                e("th", null, "Usage Type"),
+                e("th", { className:"right" }, "Credits Y1"),
+                e("th", { className:"right" }, "Credits Y2"),
+                e("th", { className:"right" }, "Credits Y3"),
+                e("th", { className:"right" }, "Cost Y1"),
+                e("th", { className:"right" }, "Cost Y2"),
+                e("th", { className:"right" }, "Cost Y3")
+              )
+            ),
+            e("tbody", null,
+              calcs.map(function(r) {
+                return e("tr", { key:r.name },
+                  e("td", { className:"name" }, r.name),
+                  r.credits.map(function(c,i){ return e("td",{key:"c"+i,className:"right accent"},fmtCr(c)); }),
+                  r.costs.map(function(c,i){ return e("td",{key:"$"+i,className:"right"},fmtCost(c)); })
+                );
+              }),
+              e("tr", { className:"total" },
+                e("td", { className:"name" }, "Total"),
+                totals.credits.map(function(c,i){ return e("td",{key:"tc"+i,className:"right accent"},fmtCr(c)); }),
+                totals.costs.map(function(c,i){ return e("td",{key:"t$"+i,className:"right"},fmtCost(c)); })
+              )
+            )
+          )
+        )
+      ),
+
+      /* Rate card reference */
+      e("div", { className:"card", style:{ marginTop:20 } },
+        e("div", { className:"card-label" }, "Rate Card Reference (Production)"),
+        e("div", { className:"table-wrap" },
+          e("table", { className:"table" },
+            e("thead", null,
+              e("tr", null,
+                e("th", null, "Usage Type"),
+                e("th", null, "Category"),
+                e("th", { className:"right" }, "Multiplier"),
+                e("th", null, "Unit")
+              )
+            ),
+            e("tbody", null,
+              RATE_CARD.map(function(rc) {
+                return e("tr", { key:rc.id },
+                  e("td", { className:"name" }, rc.name),
+                  e("td", { style:{ color:"var(--text-muted)" } }, rc.cat),
+                  e("td", { className:"right accent" }, rc.rate.toLocaleString()),
+                  e("td", { style:{ color:"var(--text-muted)" } }, rc.unit)
+                );
+              })
+            )
+          )
+        )
+      ),
+
+      /* Footer */
+      e("div", { className:"footer" },
+        e("div", { style:{ marginBottom:8 } },
+          e("strong", null, "Disclaimer: "),
+          "This calculator provides estimates based on the official Salesforce Data Services Rate Card (last updated August 2025). Actual consumption may vary. Salesforce ingestion from native connectors (Sales Cloud, Service Cloud, Marketing Cloud Engagement, Marketing Cloud Personalization, Commerce Cloud) is free since September 2025. Always verify contractual rates with your Salesforce Account Executive."
+        ),
+        e("div", null,
+          "Built by ",
+          e("a", { href:"https://cramm.dev", target:"_blank", rel:"noopener" }, "Christopher Ramm"),
+          " \u00b7 Salesforce CTA & MVP \u00b7 DCX CTO Germany @ Capgemini \u00b7 Open Source under ",
+          e("a", { href:"https://github.com/rammc/data360-credit-calculator", target:"_blank", rel:"noopener" }, "MIT License")
+        ),
+        e("div", { className:"tm" }, "Salesforce, Data 360, and Data Cloud are trademarks of Salesforce, Inc. This project is not affiliated with or endorsed by Salesforce.")
+      )
+    )
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("app")).render(e(App));
+</script>
+</body>
+</html>
