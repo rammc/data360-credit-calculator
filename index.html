@@ -106,9 +106,9 @@
     .intro p:last-child { margin-bottom: 0; }
     .intro strong { color: var(--text); font-weight: 600; }
 
-    /* Top bar: use case + cost + test params */
+    /* Top bar: global params */
     .top-bar {
-      display: grid; grid-template-columns: 1fr 220px 110px 110px;
+      display: grid; grid-template-columns: 2fr 1fr 1fr;
       gap: 16px; margin-bottom: 32px; align-items: end;
     }
     .cost-group { display: flex; }
@@ -123,6 +123,36 @@
     @media (max-width: 640px) {
       .top-bar { grid-template-columns: 1fr; }
     }
+
+    /* Tabs */
+    .tabs {
+      display: flex; gap: 4px; margin-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0; overflow-x: auto;
+    }
+    .tab {
+      padding: 10px 16px; font-family: var(--font-body);
+      font-size: 13px; font-weight: 500; color: var(--text-muted);
+      cursor: pointer; border-bottom: 2px solid transparent;
+      white-space: nowrap; transition: all 0.2s;
+      display: flex; align-items: center; gap: 8px;
+      background: none; border-top: none; border-left: none; border-right: none;
+    }
+    .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .tab:hover:not(.active) { color: var(--text); }
+    .tab-close {
+      width: 16px; height: 16px; display: flex; align-items: center;
+      justify-content: center; border-radius: 4px; font-size: 12px;
+      color: var(--text-faint); cursor: pointer; background: none; border: none;
+      padding: 0; font-family: var(--font-body);
+    }
+    .tab-close:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+    .tab-add {
+      padding: 10px 16px; color: var(--accent-muted); cursor: pointer;
+      font-size: 13px; font-weight: 500; white-space: nowrap;
+      background: none; border: none; font-family: var(--font-body);
+    }
+    .tab-add:hover { color: var(--accent); }
 
     /* Cards */
     .card {
@@ -394,60 +424,108 @@ function BreakdownBar(props) {
 /* ── Main App ──────────────────────────────────────────── */
 
 function App() {
-  var _uc = React.useState(""),  useCaseName = _uc[0],  setUseCaseName = _uc[1];
-  var _cp = React.useState(500), costPer100K = _cp[0],  setCostPer100K = _cp[1];
-  var _cu = React.useState("$"), currency = _cu[0],     setCurrency = _cu[1];
-  var _tv = React.useState(5),   testVol = _tv[0],      setTestVol = _tv[1];
-  var _tr = React.useState(10),  testRuns = _tr[0],     setTestRuns = _tr[1];
+  /* ── Global state ─────────────────────────────────────── */
+  var _cp = React.useState(500), costPer100K = _cp[0], setCostPer100K = _cp[1];
+  var _cu = React.useState("$"), currency = _cu[0], setCurrency = _cu[1];
+  var _tv = React.useState(5), testVol = _tv[0], setTestVol = _tv[1];
+  var _tr = React.useState(10), testRuns = _tr[0], setTestRuns = _tr[1];
 
-  var initStates = {};
-  RATE_CARD.forEach(function(rc){ initStates[rc.id] = { active:false, volume:1000000, freq:365, growth:0.05 }; });
-  var _us = React.useState(initStates), usages = _us[0], setUsages = _us[1];
+  /* ── Use-case state ───────────────────────────────────── */
+  function freshUsages() {
+    var u = {};
+    RATE_CARD.forEach(function(rc){ u[rc.id] = { active:false, volume:1000000, freq:365, growth:0.05 }; });
+    return u;
+  }
+  var _nextId = React.useRef(2);
+  var _ucs = React.useState([{ id:1, name:"", usages:freshUsages() }]);
+  var useCases = _ucs[0], setUseCases = _ucs[1];
+  var _at = React.useState(1);
+  var activeTab = _at[0], setActiveTab = _at[1];
+  var nameRef = React.useRef(null);
 
-  function toggle(id) {
-    setUsages(function(prev) {
-      var next = Object.assign({}, prev);
-      next[id] = Object.assign({}, next[id], { active: !next[id].active });
-      return next;
+  var activeUC = useCases.find(function(uc){ return uc.id === activeTab; }) || useCases[0];
+
+  function addUseCase() {
+    var newId = _nextId.current++;
+    setUseCases(function(prev){ return prev.concat([{ id:newId, name:"Use Case "+newId, usages:freshUsages() }]); });
+    setActiveTab(newId);
+    setTimeout(function(){ if(nameRef.current) nameRef.current.focus(); }, 0);
+  }
+  function deleteUseCase(id) {
+    if (useCases.length <= 1) return;
+    if (!window.confirm("Delete this use case?")) return;
+    var remaining = useCases.filter(function(uc){ return uc.id !== id; });
+    setUseCases(remaining);
+    if (activeTab === id) setActiveTab(remaining[0].id);
+  }
+  function updateUCField(field, val) {
+    setUseCases(function(prev) {
+      return prev.map(function(uc) {
+        if (uc.id !== activeTab) return uc;
+        var upd = {}; upd[field] = val;
+        return Object.assign({}, uc, upd);
+      });
     });
   }
-  function change(id, field, val) {
-    setUsages(function(prev) {
-      var next = Object.assign({}, prev);
-      var upd = {}; upd[field] = val;
-      next[id] = Object.assign({}, next[id], upd);
-      return next;
+  function toggle(usageId) {
+    setUseCases(function(prev) {
+      return prev.map(function(uc) {
+        if (uc.id !== activeTab) return uc;
+        var next = Object.assign({}, uc.usages);
+        next[usageId] = Object.assign({}, next[usageId], { active:!next[usageId].active });
+        return Object.assign({}, uc, { usages:next });
+      });
+    });
+  }
+  function change(usageId, field, val) {
+    setUseCases(function(prev) {
+      return prev.map(function(uc) {
+        if (uc.id !== activeTab) return uc;
+        var next = Object.assign({}, uc.usages);
+        var upd = {}; upd[field] = val;
+        next[usageId] = Object.assign({}, next[usageId], upd);
+        return Object.assign({}, uc, { usages:next });
+      });
     });
   }
 
-  var calcs = React.useMemo(function() {
-    var results = [];
+  /* ── Calculations ─────────────────────────────────────── */
+  var allCalcs = React.useMemo(function() {
     var tf = testVol / 100;
-    RATE_CARD.forEach(function(rc) {
-      var st = usages[rc.id];
-      if (!st || !st.active) return;
-      var base = st.volume * st.freq;
-      var test = st.volume * tf * testRuns;
-      var y1 = base + test;
-      var y2 = y1 * (1 + st.growth);
-      var y3 = y2 * (1 + st.growth);
-      var cr = [y1,y2,y3].map(function(v){ return (v/1e6)*rc.rate; });
-      var co = cr.map(function(c){ return (c/1e5)*costPer100K; });
-      results.push({ name:rc.name, cat:rc.cat, credits:cr, costs:co });
+    return useCases.map(function(uc) {
+      var results = [];
+      RATE_CARD.forEach(function(rc) {
+        var st = uc.usages[rc.id];
+        if (!st || !st.active) return;
+        var base = st.volume * st.freq;
+        var test = st.volume * tf * testRuns;
+        var y1 = base + test;
+        var y2 = y1 * (1 + st.growth);
+        var y3 = y2 * (1 + st.growth);
+        var cr = [y1,y2,y3].map(function(v){ return (v/1e6)*rc.rate; });
+        var co = cr.map(function(c){ return (c/1e5)*costPer100K; });
+        results.push({ name:rc.name, cat:rc.cat, credits:cr, costs:co });
+      });
+      var t = { credits:[0,0,0], costs:[0,0,0] };
+      results.forEach(function(r) {
+        for (var i=0;i<3;i++) { t.credits[i]+=r.credits[i]; t.costs[i]+=r.costs[i]; }
+      });
+      return { id:uc.id, name:uc.name||"Use Case "+uc.id, results:results, totals:t };
     });
-    return results;
-  }, [usages, testVol, testRuns, costPer100K]);
+  }, [useCases, testVol, testRuns, costPer100K]);
 
-  var totals = React.useMemo(function() {
+  var globalTotals = React.useMemo(function() {
     var t = { credits:[0,0,0], costs:[0,0,0] };
-    calcs.forEach(function(r) {
-      for (var i=0;i<3;i++) { t.credits[i]+=r.credits[i]; t.costs[i]+=r.costs[i]; }
+    allCalcs.forEach(function(uc) {
+      for (var i=0;i<3;i++) { t.credits[i]+=uc.totals.credits[i]; t.costs[i]+=uc.totals.costs[i]; }
     });
     return t;
-  }, [calcs]);
+  }, [allCalcs]);
 
-  var activeCount = Object.keys(usages).filter(function(k){ return usages[k].active; }).length;
+  var activeCalc = allCalcs.find(function(c){ return c.id === activeTab; }) || allCalcs[0];
+  var activeCount = Object.keys(activeUC.usages).filter(function(k){ return activeUC.usages[k].active; }).length;
 
+  /* ── Render ───────────────────────────────────────────── */
   return e("div", null,
     /* Header */
     e("div", { className:"header" },
@@ -476,16 +554,8 @@ function App() {
         )
       ),
 
-      /* Top bar */
+      /* Top bar – global params only */
       e("div", { className:"top-bar" },
-        e("div", null,
-          e("label", { className:"label" }, "Use Case Name"),
-          e("input", {
-            type:"text", className:"input", placeholder:"e.g. Customer 360 Segmentation",
-            value:useCaseName, onChange:function(ev){ setUseCaseName(ev.target.value); },
-            style:{ fontSize:15 }
-          })
-        ),
         e("div", null,
           e("label", { className:"label" }, "Cost per 100K Credits"),
           e("div", { className:"cost-group" },
@@ -507,16 +577,85 @@ function App() {
         )
       ),
 
-      /* Summary cards */
+      /* Global summary cards */
       e("div", { className:"summary-grid" },
-        e(SummaryCard, { label:"Total Credits", vals:totals.credits, fmt:fmtCr, accent:"linear-gradient(90deg,#00d2d2,#0088ff)" }),
-        e(SummaryCard, { label:"Total Cost (at "+currency+costPer100K.toLocaleString()+" / 100K credits)", vals:totals.costs, fmt:function(n){ return fmtCost(n, currency); }, accent:"linear-gradient(90deg,#0088ff,#7c4dff)" })
+        e(SummaryCard, { label:"Total Credits", vals:globalTotals.credits, fmt:fmtCr, accent:"linear-gradient(90deg,#00d2d2,#0088ff)" }),
+        e(SummaryCard, { label:"Total Cost (at "+currency+costPer100K.toLocaleString()+" / 100K credits)", vals:globalTotals.costs, fmt:function(n){ return fmtCost(n, currency); }, accent:"linear-gradient(90deg,#0088ff,#7c4dff)" })
       ),
 
-      /* Breakdown */
-      calcs.length > 0 && e("div", { className:"card", style:{ marginBottom:36 } },
-        e("div", { className:"card-label" }, "Credit Distribution \u2013 Year 1"),
-        e(BreakdownBar, { data:calcs })
+      /* Use-case comparison table */
+      useCases.length > 1 && e("div", { className:"card", style:{ marginBottom:14 } },
+        e("div", { className:"card-label" }, "Use Case Comparison"),
+        e("div", { className:"table-wrap" },
+          e("table", { className:"table" },
+            e("thead", null,
+              e("tr", null,
+                e("th", null, "Use Case"),
+                e("th", { className:"right" }, "Credits Y1"),
+                e("th", { className:"right" }, "Credits Y2"),
+                e("th", { className:"right" }, "Credits Y3"),
+                e("th", { className:"right" }, "Cost Y1"),
+                e("th", { className:"right" }, "Cost Y2"),
+                e("th", { className:"right" }, "Cost Y3")
+              )
+            ),
+            e("tbody", null,
+              allCalcs.map(function(uc) {
+                return e("tr", { key:uc.id },
+                  e("td", { className:"name" }, uc.name),
+                  uc.totals.credits.map(function(c,i){ return e("td",{key:"c"+i,className:"right accent"},fmtCr(c)); }),
+                  uc.totals.costs.map(function(c,i){ return e("td",{key:"$"+i,className:"right"},fmtCost(c,currency)); })
+                );
+              }),
+              e("tr", { className:"total" },
+                e("td", { className:"name" }, "Total"),
+                globalTotals.credits.map(function(c,i){ return e("td",{key:"tc"+i,className:"right accent"},fmtCr(c)); }),
+                globalTotals.costs.map(function(c,i){ return e("td",{key:"t$"+i,className:"right"},fmtCost(c,currency)); })
+              )
+            )
+          )
+        )
+      ),
+
+      /* Credit distribution by use case */
+      useCases.length > 1 && globalTotals.credits[0] > 0 && e("div", { className:"card", style:{ marginBottom:14 } },
+        e("div", { className:"card-label" }, "Credit Distribution by Use Case \u2013 Year 1"),
+        e(BreakdownBar, { data:allCalcs.filter(function(uc){ return uc.totals.credits[0]>0; }).map(function(uc){ return { name:uc.name, credits:uc.totals.credits }; }) })
+      ),
+
+      /* Credit distribution by usage type for active UC */
+      activeCalc.results.length > 0 && e("div", { className:"card", style:{ marginBottom:36 } },
+        e("div", { className:"card-label" }, "Credit Distribution"+(activeUC.name?" \u2013 "+activeUC.name:"")+" \u2013 Year 1"),
+        e(BreakdownBar, { data:activeCalc.results })
+      ),
+
+      /* Tab bar */
+      e("div", { className:"tabs" },
+        useCases.map(function(uc) {
+          return e("button", {
+            key:uc.id,
+            className:"tab"+(uc.id===activeTab?" active":""),
+            onClick:function(){ setActiveTab(uc.id); }
+          },
+            e("span", null, uc.name || "Use Case "+uc.id),
+            useCases.length > 1 && e("button", {
+              className:"tab-close",
+              onClick:function(ev){ ev.stopPropagation(); deleteUseCase(uc.id); }
+            }, "\u00d7")
+          );
+        }),
+        e("button", { className:"tab-add", onClick:addUseCase }, "+ Add use case")
+      ),
+
+      /* Use case name */
+      e("div", { style:{ marginBottom:20 } },
+        e("label", { className:"label" }, "Use Case Name"),
+        e("input", {
+          ref:nameRef,
+          type:"text", className:"input", placeholder:"e.g. Customer 360 Segmentation",
+          value:activeUC.name, onChange:function(ev){ updateUCField("name", ev.target.value); },
+          style:{ fontSize:15 }
+        })
       ),
 
       /* Section heading */
@@ -535,16 +674,16 @@ function App() {
           e("div", { className:"cat-heading" }, cat),
           items.map(function(rc) {
             return e(UsageRow, {
-              key:rc.id, rc:rc, state:usages[rc.id],
+              key:rc.id, rc:rc, state:activeUC.usages[rc.id],
               onToggle:toggle, onChange:change
             });
           })
         );
       }),
 
-      /* Detailed breakdown table */
-      calcs.length > 0 && e("div", { className:"card", style:{ marginTop:36 } },
-        e("div", { className:"card-label" }, "Detailed Breakdown"),
+      /* Detailed breakdown – active UC */
+      activeCalc.results.length > 0 && e("div", { className:"card", style:{ marginTop:36 } },
+        e("div", { className:"card-label" }, "Detailed Breakdown"+(activeUC.name?" \u2013 "+activeUC.name:"")),
         e("div", { className:"table-wrap" },
           e("table", { className:"table" },
             e("thead", null,
@@ -559,7 +698,7 @@ function App() {
               )
             ),
             e("tbody", null,
-              calcs.map(function(r) {
+              activeCalc.results.map(function(r) {
                 return e("tr", { key:r.name },
                   e("td", { className:"name" }, r.name),
                   r.credits.map(function(c,i){ return e("td",{key:"c"+i,className:"right accent"},fmtCr(c)); }),
@@ -568,8 +707,8 @@ function App() {
               }),
               e("tr", { className:"total" },
                 e("td", { className:"name" }, "Total"),
-                totals.credits.map(function(c,i){ return e("td",{key:"tc"+i,className:"right accent"},fmtCr(c)); }),
-                totals.costs.map(function(c,i){ return e("td",{key:"t$"+i,className:"right"},fmtCost(c,currency)); })
+                activeCalc.totals.credits.map(function(c,i){ return e("td",{key:"tc"+i,className:"right accent"},fmtCr(c)); }),
+                activeCalc.totals.costs.map(function(c,i){ return e("td",{key:"t$"+i,className:"right"},fmtCost(c,currency)); })
               )
             )
           )
