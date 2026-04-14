@@ -213,6 +213,32 @@
     }
     @media (max-width: 640px) { .usage-params { grid-template-columns: 1fr; } }
 
+    /* Usage info panel */
+    .usage-info-toggle {
+      font-family: var(--font-body); font-size: 11px; color: var(--accent-muted);
+      cursor: pointer; display: inline-flex; align-items: center; gap: 4px;
+      margin-top: 4px; background: none; border: none; padding: 0;
+    }
+    .usage-info-toggle:hover { color: var(--accent); }
+    .usage-info-panel {
+      margin-top: 12px; padding: 16px;
+      background: rgba(255,255,255,0.02); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); font-family: var(--font-body);
+      font-size: 12px; line-height: 1.7; color: var(--text-muted);
+    }
+    .usage-info-panel strong { color: var(--text); font-weight: 600; }
+    .usage-info-examples { margin: 8px 0; padding-left: 16px; }
+    .usage-info-examples li { margin-bottom: 4px; color: var(--text-muted); }
+    .usage-info-volume {
+      margin-top: 10px; padding: 10px 14px;
+      background: var(--accent-bg); border: 1px solid var(--accent-border);
+      border-radius: 6px; font-size: 12px; color: var(--text);
+    }
+    .usage-info-volume .volume-label {
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--accent-muted); font-weight: 600; margin-bottom: 4px;
+    }
+
     /* Toggle */
     .toggle {
       width: 42px; height: 24px; border-radius: 12px; border: none;
@@ -286,16 +312,66 @@ const e = React.createElement;
 /* ── Data ──────────────────────────────────────────────── */
 
 const RATE_CARD = [
-  { id:"ext_pipeline",        name:"(External) Data Pipeline",          rate:2000,   unit:"Per 1M Rows (Batch)", cat:"Connect & Unify",           desc:"Ingest data from external (non-Salesforce) sources" },
-  { id:"profile_unification", name:"Profile Unification",               rate:100000, unit:"Per 1M Rows",         cat:"Connect & Unify",           desc:"Identity resolution to unify customer profiles" },
-  { id:"batch_ci",            name:"Batch Calculated Insights",         rate:15,     unit:"Per 1M Rows",         cat:"Analyze & Predict",         desc:"Computes metrics and insights from batch data" },
-  { id:"streaming_ci",        name:"Streaming Calculated Insights",     rate:800,    unit:"Per 1M Rows",         cat:"Analyze & Predict",         desc:"Computes metrics and insights from streaming data in real-time" },
-  { id:"inferences",          name:"Inferences",                        rate:3500,   unit:"Per 1M Inferences",   cat:"Analyze & Predict",         desc:"Uses AI/ML to derive insights and predictions from data" },
-  { id:"segmentation",        name:"Segmentation",                      rate:20,     unit:"Per 1M Rows",         cat:"Segmentation & Activation", desc:"Divides data into segments based on defined criteria" },
-  { id:"batch_activation",    name:"Batch Activation",                  rate:10,     unit:"Per 1M Rows",         cat:"Segmentation & Activation", desc:"Activates segmented data for marketing and other applications" },
-  { id:"activate_dmo",        name:"Activate DMO – Streaming",          rate:1600,   unit:"Per 1M Rows",         cat:"Segmentation & Activation", desc:"Activates Data Model Objects via streaming" },
-  { id:"streaming_actions",   name:"Streaming Actions (incl. Lookups)", rate:800,    unit:"Per 1M Rows",         cat:"Act",                       desc:"Executes actions, workflows, and lookups on streaming events" },
-  { id:"data_queries",        name:"Data Queries",                      rate:2,      unit:"Per 1M Rows",         cat:"Act",                       desc:"Executes SQL-like queries on data within Data 360" },
+  { id:"ext_pipeline", name:"(External) Data Pipeline", rate:2000, unit:"Per 1M Rows (Batch)", cat:"Connect & Unify",
+    desc:"Ingest data from external (non-Salesforce) sources",
+    businessDesc:"Brings data from non-Salesforce systems into Data 360. Required whenever you connect external data sources like your data warehouse, ERP, website analytics, or third-party data providers.",
+    examples:["Importing customer purchase history from SAP","Syncing website behavior data from Google Analytics","Loading product catalog from an external PIM system"],
+    volumeHint:"Number of data records imported per batch. For example, if you import 2 million customer records nightly, your volume is 2,000,000.",
+    volumePlaceholder:"e.g. 2,000,000 records" },
+  { id:"profile_unification", name:"Profile Unification", rate:100000, unit:"Per 1M Rows", cat:"Connect & Unify",
+    desc:"Identity resolution to unify customer profiles",
+    businessDesc:"Matches and merges duplicate customer records into a single unified profile. Essential for building a true 360\u00b0 customer view when data comes from multiple sources.",
+    examples:["Merging online and in-store customer profiles","Deduplicating contacts across Sales Cloud and Marketing Cloud","Linking anonymous web visitors to known CRM contacts after login"],
+    volumeHint:"Number of profile records processed during identity resolution. Typically equals your total customer base size per run.",
+    volumePlaceholder:"e.g. 1,000,000 profiles" },
+  { id:"batch_ci", name:"Batch Calculated Insights", rate:15, unit:"Per 1M Rows", cat:"Analyze & Predict",
+    desc:"Computes metrics and insights from batch data",
+    businessDesc:"Computes KPIs and metrics about your customers on a scheduled basis \u2014 like \u2018total purchases last 90 days\u2019 or \u2018email engagement score\u2019. These insights are recalculated periodically, not in real-time.",
+    examples:["Calculating customer lifetime value (CLV) for each profile","Computing a recency-frequency-monetary (RFM) score nightly","Aggregating support ticket count per customer weekly"],
+    volumeHint:"Number of rows processed per calculation run. Formula: number of insights \u00d7 rows per insight \u00d7 number of customer profiles. Example: 5 insights \u00d7 10 rows each \u00d7 1M profiles = 50M rows.",
+    volumePlaceholder:"e.g. 50,000,000 rows" },
+  { id:"streaming_ci", name:"Streaming Calculated Insights", rate:800, unit:"Per 1M Rows", cat:"Analyze & Predict",
+    desc:"Computes metrics and insights from streaming data in real-time",
+    businessDesc:"Same as Batch Calculated Insights, but computed in real-time as data flows in. Use this when insights need to be immediately up-to-date \u2014 for example, to trigger actions the moment a customer crosses a threshold.",
+    examples:["Updating a customer\u2019s cart abandonment score in real-time","Recalculating lead score instantly when a prospect visits the pricing page","Tracking live event attendance count as check-ins happen"],
+    volumeHint:"Same calculation as batch insights, but volume is driven by event frequency. High-traffic scenarios (e.g., website events) can generate significantly more rows.",
+    volumePlaceholder:"e.g. 10,000,000 rows" },
+  { id:"inferences", name:"Inferences", rate:3500, unit:"Per 1M Inferences", cat:"Analyze & Predict",
+    desc:"Uses AI/ML to derive insights and predictions from data",
+    businessDesc:"Runs AI and machine learning predictions on your data \u2014 like predicting which customers are likely to churn, what product they\u2019ll buy next, or how to classify incoming support cases.",
+    examples:["Predicting customer churn probability for proactive retention","Next-best-offer recommendations for email campaigns","Sentiment analysis on customer feedback and survey responses"],
+    volumeHint:"Number of individual predictions (inferences) made. If you score 500K customers daily for churn risk, that\u2019s 500,000 inferences per day.",
+    volumePlaceholder:"e.g. 500,000 predictions" },
+  { id:"segmentation", name:"Segmentation", rate:20, unit:"Per 1M Rows", cat:"Segmentation & Activation",
+    desc:"Divides data into segments based on defined criteria",
+    businessDesc:"Divides your customer base into targeted groups based on criteria you define \u2014 such as \u2018high-value customers in Berlin who haven\u2019t purchased in 60 days\u2019. Segments are the foundation for personalized marketing.",
+    examples:["Creating audience segments for a seasonal email campaign","Building a lookalike segment of your best customers for ad targeting","Segmenting service cases by priority and product line for routing"],
+    volumeHint:"Estimated size of the segment (number of profiles evaluated). If your segment scans 2M profiles to find 50K matches, the volume is 2,000,000.",
+    volumePlaceholder:"e.g. 2,000,000 profiles" },
+  { id:"batch_activation", name:"Batch Activation", rate:10, unit:"Per 1M Rows", cat:"Segmentation & Activation",
+    desc:"Activates segmented data for marketing and other applications",
+    businessDesc:"Pushes your segments to destination systems for action \u2014 like sending a segment to your email platform, ad network, or analytics tool. This happens on a schedule (e.g., daily sync).",
+    examples:["Syncing a VIP customer segment to Marketing Cloud for a campaign","Pushing a churn-risk segment to Google Ads for retention targeting","Exporting a segment to Tableau for reporting"],
+    volumeHint:"Number of profiles activated (pushed to destination). Usually equals or is slightly smaller than the segment size. If you activate 500K profiles to an ad platform, the volume is 500,000.",
+    volumePlaceholder:"e.g. 500,000 profiles" },
+  { id:"activate_dmo", name:"Activate DMO \u2013 Streaming", rate:1600, unit:"Per 1M Rows", cat:"Segmentation & Activation",
+    desc:"Activates Data Model Objects via streaming",
+    businessDesc:"Activates Data Model Objects in real-time via streaming. Used for scenarios where data needs to be pushed to downstream systems immediately as it changes, rather than on a schedule.",
+    examples:["Real-time profile updates to a personalization engine","Streaming updated inventory data to a commerce storefront","Pushing live customer status changes to a service dashboard"],
+    volumeHint:"Number of records streamed per activation event. Driven by how frequently your data changes and needs to be pushed downstream.",
+    volumePlaceholder:"e.g. 100,000 records" },
+  { id:"streaming_actions", name:"Streaming Actions (incl. Lookups)", rate:800, unit:"Per 1M Rows", cat:"Act",
+    desc:"Executes actions, workflows, and lookups on streaming events",
+    businessDesc:"Triggers automated actions in real-time based on streaming events \u2014 like sending a push notification the moment a customer enters a geofence, or looking up a customer\u2019s profile when they call your contact center.",
+    examples:["Triggering a welcome SMS when a new customer signs up","Real-time product recommendation when a customer opens the app","Looking up VIP status when a customer calls support"],
+    volumeHint:"Number of actions triggered or lookups performed. If 10% of your streaming insights trigger an action, and you process 1M insights, that\u2019s 100,000 actions.",
+    volumePlaceholder:"e.g. 100,000 actions" },
+  { id:"data_queries", name:"Data Queries", rate:2, unit:"Per 1M Rows", cat:"Act",
+    desc:"Runs SQL-like queries against your unified data",
+    businessDesc:"Runs SQL-like queries against your unified data for ad-hoc analysis, reporting dashboards, or custom applications. Each query execution that scans data consumes credits.",
+    examples:["Powering a custom executive dashboard with live customer metrics","Running ad-hoc analysis on campaign performance","Querying unified profiles from a custom app via API"],
+    volumeHint:"Number of rows scanned per query execution. A query scanning 5M rows to return 1,000 results consumes credits on 5M rows, not 1,000.",
+    volumePlaceholder:"e.g. 5,000,000 rows" },
 ];
 
 const FREQS = [
@@ -343,20 +419,36 @@ function Toggle(props) {
 
 function UsageRow(props) {
   var rc = props.rc, st = props.state, active = st.active;
+  var infoOpen = props.infoOpen, onInfoToggle = props.onInfoToggle;
   return e("div", { className: "usage-row" + (active ? " active" : "") },
     e("div", { className:"usage-header" },
       e(Toggle, { on:active, onClick:function(){ props.onToggle(rc.id); } }),
       e("div", { style:{ flex:1 } },
         e("div", { className:"usage-name" }, rc.name),
-        e("div", { className:"usage-desc" }, rc.desc)
+        e("div", { className:"usage-desc" }, rc.desc),
+        rc.businessDesc && e("button", {
+          className:"usage-info-toggle",
+          onClick:function(){ onInfoToggle(rc.id); }
+        }, infoOpen ? "\u25BE Hide details" : "\u25B8 Learn more")
       ),
       e("div", { className:"usage-badge" }, rc.rate.toLocaleString()+" cr / "+rc.unit.replace("Per ",""))
+    ),
+    infoOpen && rc.businessDesc && e("div", { className:"usage-info-panel" },
+      e("div", null, e("strong", null, "What this means: "), rc.businessDesc),
+      rc.examples && e("ul", { className:"usage-info-examples" },
+        rc.examples.map(function(ex, i){ return e("li", { key:i }, ex); })
+      ),
+      rc.volumeHint && e("div", { className:"usage-info-volume" },
+        e("div", { className:"volume-label" }, "What does \u201cvolume\u201d mean here?"),
+        rc.volumeHint
+      )
     ),
     active && e("div", { className:"usage-params" },
       e("div", null,
         e("label", { className:"label" }, "Volume per execution"),
         e("input", {
           type:"number", className:"input", value:st.volume,
+          placeholder:rc.volumePlaceholder||"",
           onChange:function(ev){ props.onChange(rc.id,"volume",Number(ev.target.value)); }
         })
       ),
@@ -442,6 +534,8 @@ function App() {
   var _at = React.useState(1);
   var activeTab = _at[0], setActiveTab = _at[1];
   var nameRef = React.useRef(null);
+  var _io = React.useState(null), infoOpen = _io[0], setInfoOpen = _io[1];
+  function toggleInfo(id) { setInfoOpen(function(prev){ return prev === id ? null : id; }); }
 
   var activeUC = useCases.find(function(uc){ return uc.id === activeTab; }) || useCases[0];
 
@@ -675,7 +769,8 @@ function App() {
           items.map(function(rc) {
             return e(UsageRow, {
               key:rc.id, rc:rc, state:activeUC.usages[rc.id],
-              onToggle:toggle, onChange:change
+              onToggle:toggle, onChange:change,
+              infoOpen:infoOpen===rc.id, onInfoToggle:toggleInfo
             });
           })
         );
