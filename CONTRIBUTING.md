@@ -44,6 +44,24 @@ When Salesforce publishes updated multipliers:
 - Accessibility improvements
 - Dark/light theme toggle
 
+### Contributing Templates
+
+Use case templates are one of the easiest ways to contribute. A template is a JSON object
+that defines which usage types are active and with what default values.
+
+To add a template:
+
+1. Add your template to the `TEMPLATES` array in `index.html`
+2. Include: `templateId` (snake_case), `name`, `description` (1-2 sentences),
+   and `usages` with realistic volumes for a mid-size enterprise
+3. Open a PR with:
+   - The template definition
+   - A brief explanation of the use case and why the chosen volumes are realistic
+   - Your source or experience basis (e.g., "based on a 5M profile retail implementation")
+
+Template volumes should represent a **mid-size enterprise** starting point (1-10M profiles).
+They will always be adjusted by the user — the goal is a reasonable default, not precision.
+
 ## Code Style
 
 - Use `var` (not `let`/`const`) for compatibility with the non-transpiled React approach
