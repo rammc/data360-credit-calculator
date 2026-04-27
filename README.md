@@ -73,6 +73,24 @@ Year N+1 = Year N × (1 + Growth Rate)
 
 Visit **[rammc.github.io/data360-credit-calculator](https://rammc.github.io/data360-credit-calculator/)** — nothing to install.
 
+### AI-powered configuration (optional)
+
+You can describe your use case in plain language and let Claude configure the
+calculator for you. This feature requires an Anthropic API key.
+
+1. Click the gear icon in the header and enter your API key
+2. Click "Describe your use case" in the lobby
+3. Describe what you want to achieve — the more specific, the better
+4. Claude will select usage types and estimate volumes based on your description
+
+**Privacy:** Your API key is stored in browser memory only — it is never saved
+to disk, cookies, or localStorage. The key is lost on page reload. API calls go
+directly from your browser to `api.anthropic.com`. No data passes through our
+servers (there are no servers — this is a static GitHub Pages site).
+
+**Cost:** Each AI configuration request costs approximately $0.01-0.03 in
+Anthropic API credits, depending on the length of your description.
+
 ### Option 2: Run locally
 
 ```bash

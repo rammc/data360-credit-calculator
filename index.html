@@ -296,6 +296,244 @@
 
     /* Responsive table scroll */
     .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+
+    /* Template dialog */
+    .template-dialog {
+      margin-bottom: 24px; padding: 24px;
+      background: var(--surface); border: 1px solid var(--border); border-radius: 14px;
+    }
+    .template-dialog-header {
+      font-family: var(--font-body); font-size: 15px; font-weight: 600;
+      color: var(--text); margin-bottom: 6px;
+    }
+    .template-dialog-hint {
+      font-family: var(--font-body); font-size: 12px; color: var(--text-faint);
+      line-height: 1.6; margin-bottom: 20px;
+    }
+    .template-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 640px) { .template-grid { grid-template-columns: 1fr; } }
+    .template-card {
+      padding: 16px; background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .template-card:hover {
+      border-color: var(--accent-border); background: rgba(0,210,210,0.03);
+    }
+    .template-card-name {
+      font-family: var(--font-body); font-size: 14px; font-weight: 600;
+      color: var(--text); margin-bottom: 6px;
+    }
+    .template-card-desc {
+      font-family: var(--font-body); font-size: 12px; color: var(--text-muted);
+      line-height: 1.6; margin-bottom: 10px;
+    }
+    .template-card-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .template-card-tag {
+      font-family: var(--font-mono); font-size: 10px; color: var(--accent-muted);
+      background: var(--accent-bg); padding: 2px 8px; border-radius: 4px; white-space: nowrap;
+    }
+    .template-blank-link {
+      display: block; text-align: center; margin-top: 16px;
+      font-family: var(--font-body); font-size: 12px; color: var(--text-faint);
+      cursor: pointer; background: none; border: none;
+    }
+    .template-blank-link:hover { color: var(--text); }
+    .template-category {
+      font-family: var(--font-body); font-size: 11px; font-weight: 600;
+      color: var(--accent-muted); text-transform: uppercase; letter-spacing: 0.08em;
+      margin-top: 20px; margin-bottom: 12px; padding-bottom: 6px;
+      border-bottom: 1px solid var(--border);
+    }
+    .template-category:first-of-type { margin-top: 0; }
+
+    /* Template banner */
+    .template-banner {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; padding: 10px 16px; margin-bottom: 16px;
+      background: var(--accent-bg); border: 1px solid var(--accent-border);
+      border-radius: var(--radius-sm); font-family: var(--font-body);
+      font-size: 12px; color: var(--text-muted); line-height: 1.5;
+    }
+    .template-banner strong { color: var(--text); }
+    .template-banner-close {
+      background: none; border: none; color: var(--text-faint); cursor: pointer;
+      font-size: 14px; padding: 2px 6px; border-radius: 4px; flex-shrink: 0;
+    }
+    .template-banner-close:hover { background: rgba(255,255,255,0.1); color: var(--text); }
+
+    /* Lobby */
+    .lobby-section { margin-bottom: 40px; }
+    .lobby-heading {
+      font-family: var(--font-body); font-size: 20px; font-weight: 600;
+      color: var(--text); letter-spacing: -0.02em; margin-bottom: 8px;
+    }
+    .lobby-subheading {
+      font-family: var(--font-body); font-size: 13px; color: var(--text-muted);
+      line-height: 1.6; margin-bottom: 28px;
+    }
+    .lobby-template-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+    @media (max-width: 900px) { .lobby-template-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 640px) { .lobby-template-grid { grid-template-columns: 1fr; } }
+    .template-card-estimate {
+      font-family: var(--font-mono); font-size: 11px; color: var(--text-faint);
+      margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--border);
+    }
+    .blank-card {
+      padding: 18px 22px; background: transparent;
+      border: 1.5px dashed rgba(255,255,255,0.15); border-radius: var(--radius);
+      cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; gap: 14px; margin-bottom: 28px;
+    }
+    .blank-card:hover {
+      border-color: var(--accent-border); background: rgba(0,210,210,0.03);
+    }
+    .blank-card-icon {
+      width: 36px; height: 36px; border-radius: 8px;
+      background: rgba(255,255,255,0.05); display: flex;
+      align-items: center; justify-content: center;
+      font-size: 18px; color: var(--text-faint); flex-shrink: 0;
+    }
+    .blank-card:hover .blank-card-icon { color: var(--accent); background: var(--accent-bg); }
+    .blank-card-name {
+      font-family: var(--font-body); font-size: 14px; font-weight: 600;
+      color: var(--text); margin-bottom: 2px;
+    }
+    .blank-card-desc {
+      font-family: var(--font-body); font-size: 12px; color: var(--text-faint);
+    }
+    .back-to-lobby {
+      font-family: var(--font-body); font-size: 12px; color: var(--text-faint);
+      cursor: pointer; display: inline-flex; align-items: center; gap: 4px;
+      margin-bottom: 20px; transition: color 0.2s; background: none; border: none;
+    }
+    .back-to-lobby:hover { color: var(--text); }
+
+    /* Settings */
+    .settings-toggle {
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text-faint); width: 36px; height: 36px; border-radius: 10px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; margin-left: auto; flex-shrink: 0; position: relative;
+    }
+    .settings-toggle:hover { color: var(--text); border-color: var(--accent-border); background: var(--accent-bg); }
+    .settings-toggle .key-indicator {
+      position: absolute; top: 4px; right: 4px; width: 7px; height: 7px;
+      border-radius: 50%; background: #4caf50;
+    }
+    .modal-overlay {
+      display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75);
+      z-index: 1000; align-items: center; justify-content: center;
+      backdrop-filter: blur(8px);
+    }
+    .modal-overlay.visible { display: flex; }
+    .modal {
+      background: #111820; border: 1px solid var(--border); border-radius: 16px;
+      padding: 2rem; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto;
+    }
+    .modal-title {
+      font-family: var(--font-body); font-size: 1.15rem; font-weight: 700;
+      color: var(--text); margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;
+    }
+    .modal-title svg { width: 20px; height: 20px; color: var(--accent); }
+    .modal-text {
+      font-family: var(--font-body); font-size: 12px; color: var(--text-faint);
+      line-height: 1.6; margin-bottom: 0.75rem;
+    }
+    .modal-text strong { color: var(--text-muted); }
+    .modal-input-group { margin: 1.25rem 0 0.25rem; }
+    .modal-label {
+      display: block; font-size: 11px; color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: 0.06em; font-weight: 500; margin-bottom: 6px;
+    }
+    .modal-input {
+      width: 100%; padding: 0.55rem 0.8rem; background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm);
+      color: var(--text); font-family: var(--font-mono); font-size: 0.82rem;
+      outline: none; transition: border-color 0.2s;
+    }
+    .modal-input:focus { border-color: var(--accent); }
+    .modal-input.error { border-color: #ff6b6b; }
+    .modal-error {
+      font-size: 0.72rem; color: #ff6b6b; margin-top: 0.25rem; display: none;
+    }
+    .modal-error.visible { display: block; }
+    .modal-actions {
+      display: flex; gap: 8px; margin-top: 1rem; flex-wrap: wrap;
+    }
+    .modal-status {
+      font-size: 0.78rem; margin-top: 0.75rem; padding: 0.45rem 0.7rem;
+      border-radius: var(--radius-sm); display: none;
+    }
+    .modal-status.visible { display: block; }
+    .modal-status.success { background: rgba(76,175,80,0.1); color: #4caf50; border: 1px solid rgba(76,175,80,0.2); }
+    .modal-status.removed { background: rgba(255,183,77,0.1); color: #ffb74d; border: 1px solid rgba(255,183,77,0.2); }
+    .modal-link {
+      display: block; margin-top: 1rem; font-size: 0.78rem; color: var(--accent);
+      text-decoration: none;
+    }
+    .modal-link:hover { text-decoration: underline; }
+    .btn-primary {
+      background: var(--accent); color: var(--bg); border: none;
+      border-radius: var(--radius-sm); padding: 8px 20px;
+      font-family: var(--font-body); font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: opacity 0.2s;
+    }
+    .btn-primary:hover { opacity: 0.85; }
+    .btn-ghost {
+      background: none; color: var(--text-faint);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm);
+      padding: 8px 16px; font-family: var(--font-body); font-size: 12px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,0.3); color: var(--text); }
+
+    /* AI card */
+    .ai-card {
+      padding: 22px 24px; background: rgba(124,77,255,0.03);
+      border: 1.5px solid rgba(124,77,255,0.15); border-radius: var(--radius);
+      margin-bottom: 28px;
+    }
+    .ai-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .ai-card-name {
+      font-family: var(--font-body); font-size: 14px; font-weight: 600; color: var(--text);
+    }
+    .ai-card-sparkle { font-size: 16px; }
+    .ai-card-desc {
+      font-family: var(--font-body); font-size: 12px; color: var(--text-muted);
+      line-height: 1.6; margin-bottom: 14px;
+    }
+    .ai-textarea {
+      width: 100%; min-height: 100px; resize: vertical;
+      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-sm); padding: 12px 14px; color: var(--text);
+      font-family: var(--font-body); font-size: 13px; line-height: 1.6; outline: none;
+      transition: border-color 0.2s;
+    }
+    .ai-textarea:focus { border-color: rgba(124,77,255,0.4); }
+    .ai-textarea::placeholder { color: var(--text-ghost); }
+    .ai-textarea:disabled { opacity: 0.5; }
+    .ai-actions {
+      display: flex; align-items: center; justify-content: space-between; margin-top: 12px;
+    }
+    .ai-hint { font-family: var(--font-body); font-size: 11px; color: var(--text-faint); }
+    .ai-hint a { color: var(--accent); text-decoration: none; cursor: pointer; }
+    .ai-error {
+      font-family: var(--font-body); font-size: 12px; color: #ff6b6b; margin-top: 8px;
+    }
+    .btn-ai {
+      background: rgba(124,77,255,0.8); color: #fff; border: none;
+      border-radius: var(--radius-sm); padding: 9px 22px;
+      font-family: var(--font-body); font-size: 13px; font-weight: 600;
+      cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+    }
+    .btn-ai:hover { background: rgba(124,77,255,0.95); }
+    .btn-ai:disabled { opacity: 0.5; cursor: not-allowed; }
+    .spinner {
+      width: 14px; height: 14px; border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -395,17 +633,161 @@ const CURRENCIES = [
   { label:"JPY (\u00a5)", symbol:"\u00a5" },
 ];
 
+const TEMPLATE_CATEGORIES = [
+  { id:"getting_started", label:"Getting Started" },
+  { id:"advanced", label:"Advanced Scenarios" },
+];
+
+const TEMPLATES = [
+  { templateId:"proactive_service", category:"getting_started", name:"Proactive Service",
+    description:"Predict service needs and proactively reach out to customers before issues escalate. Ideal for automotive recalls, warranty reminders, or preventive maintenance notifications.",
+    usages:{ batch_ci:{ active:true, volume:5000000, freq:365, growth:0.05 }, segmentation:{ active:true, volume:2000000, freq:365, growth:0.05 }, batch_activation:{ active:true, volume:500000, freq:365, growth:0.05 } } },
+  { templateId:"personalized_marketing", category:"getting_started", name:"Personalized Marketing Journey",
+    description:"Segment audiences and activate them across channels for personalized campaigns. Covers the typical segment-activate-trigger cycle for email, push, and ad targeting.",
+    usages:{ segmentation:{ active:true, volume:5000000, freq:52, growth:0.10 }, batch_activation:{ active:true, volume:1000000, freq:52, growth:0.10 }, streaming_actions:{ active:true, volume:200000, freq:365, growth:0.10 } } },
+  { templateId:"lead_scoring", category:"getting_started", name:"Lead & Opportunity Scoring",
+    description:"Use AI to score leads and opportunities based on likelihood to convert. Combines predictive scoring with calculated engagement metrics to prioritize sales efforts.",
+    usages:{ inferences:{ active:true, volume:500000, freq:365, growth:0.05 }, batch_ci:{ active:true, volume:10000000, freq:365, growth:0.05 } } },
+  { templateId:"realtime_personalization", category:"getting_started", name:"Real-Time Personalization",
+    description:"Deliver personalized experiences the moment a customer interacts \u2014 on web, in-app, or at the point of sale. Requires streaming processing for sub-second response times.",
+    usages:{ streaming_ci:{ active:true, volume:2000000, freq:365, growth:0.15 }, streaming_actions:{ active:true, volume:500000, freq:365, growth:0.15 }, data_queries:{ active:true, volume:1000000, freq:365, growth:0.10 } } },
+  { templateId:"data_foundation", category:"getting_started", name:"Data Foundation / CDP Setup",
+    description:"Establish a unified customer data platform by ingesting external data, resolving identities, and creating foundational segments. The baseline for any Data 360 implementation.",
+    usages:{ ext_pipeline:{ active:true, volume:5000000, freq:365, growth:0.05 }, profile_unification:{ active:true, volume:3000000, freq:12, growth:0.05 }, segmentation:{ active:true, volume:3000000, freq:52, growth:0.05 } } },
+  { templateId:"ai_service_agents", category:"getting_started", name:"AI-Powered Service Agents",
+    description:"Ground Agentforce service agents in unified customer data. Agents query profiles, run inferences for case classification, and trigger follow-up actions in real-time.",
+    usages:{ inferences:{ active:true, volume:200000, freq:365, growth:0.20 }, data_queries:{ active:true, volume:5000000, freq:365, growth:0.20 }, streaming_actions:{ active:true, volume:100000, freq:365, growth:0.20 } } },
+  { templateId:"data_migration", category:"advanced", name:"Historical Data Migration",
+    description:"One-time ingestion of historical data (e.g., 5 years of transaction history from S3, Snowflake, or a data warehouse) at project start. Illustrates the credit peak at go-live compared to moderate daily deltas afterward. Tip: compare this template side-by-side with a steady-state use case to visualize the initial spike vs. ongoing cost.",
+    usages:{ ext_pipeline:{ active:true, volume:50000000, freq:1, growth:0.0 }, profile_unification:{ active:true, volume:10000000, freq:1, growth:0.0 }, batch_ci:{ active:true, volume:20000000, freq:1, growth:0.0 } } },
+  { templateId:"high_frequency_streaming", category:"advanced", name:"High-Frequency Web & App Events",
+    description:"Ingestion of real-time interaction data from websites and mobile apps \u2014 clicks, page views, cart events, search queries. Shows how quickly costs scale when every user interaction is processed individually vs. batched. Compare with a batch-based alternative to understand the real-time premium.",
+    usages:{ streaming_ci:{ active:true, volume:10000000, freq:365, growth:0.20 }, streaming_actions:{ active:true, volume:2000000, freq:365, growth:0.20 }, data_queries:{ active:true, volume:5000000, freq:365, growth:0.15 } } },
+  { templateId:"complex_identity_resolution", category:"advanced", name:"Complex Identity Resolution",
+    description:"Multi-criteria identity matching across fragmented data sources \u2014 fuzzy name matching, address normalization, phone/email deduplication. Models the computational cost when the resolution engine iterates over billions of potential match pairs. Much more expensive than simple email-only matching.",
+    usages:{ ext_pipeline:{ active:true, volume:10000000, freq:12, growth:0.05 }, profile_unification:{ active:true, volume:10000000, freq:12, growth:0.05 }, data_queries:{ active:true, volume:20000000, freq:12, growth:0.05 } } },
+  { templateId:"cross_cloud_activation", category:"advanced", name:"Cross-Cloud Activation",
+    description:"Compares the cost of activating segments to different Salesforce clouds \u2014 daily batch sync to Marketing Cloud for campaigns vs. streaming activation to Sales/Service Cloud for real-time agent actions. Helps decide which audiences need the expensive \u2018fast lane\u2019 and which can use scheduled batch delivery.",
+    usages:{ segmentation:{ active:true, volume:5000000, freq:365, growth:0.05 }, batch_activation:{ active:true, volume:2000000, freq:365, growth:0.05 }, activate_dmo:{ active:true, volume:500000, freq:365, growth:0.10 }, streaming_actions:{ active:true, volume:200000, freq:365, growth:0.10 } } },
+  { templateId:"rag_unstructured", category:"advanced", name:"RAG & Unstructured Data for AI",
+    description:"Ingestion, processing, and indexing of unstructured documents (PDF service reports, call transcripts, knowledge articles) for use with Prompt Builder, Einstein Copilot, or Agentforce. Makes the cost of Retrieval Augmented Generation (RAG) plannable \u2014 an area often missed in traditional credit estimates.",
+    usages:{ ext_pipeline:{ active:true, volume:2000000, freq:52, growth:0.15 }, inferences:{ active:true, volume:1000000, freq:365, growth:0.20 }, data_queries:{ active:true, volume:5000000, freq:365, growth:0.20 }, streaming_actions:{ active:true, volume:500000, freq:365, growth:0.15 } } },
+];
+
 /* ── Formatters ────────────────────────────────────────── */
 
 function fmtCr(n) {
-  if (!n) return "\u2013";
+  if (!n || !isFinite(n)) return "\u2013";
   if (n >= 1e6) return (n/1e6).toFixed(2)+"M";
   if (n >= 1e3) return (n/1e3).toFixed(1)+"K";
   return n.toFixed(1);
 }
 function fmtCost(n, sym) {
-  if (!n) return "\u2013";
+  if (!n || !isFinite(n)) return "\u2013";
   return (sym||"$")+Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function estimateTemplateCredits(tpl) {
+  var total = 0;
+  Object.keys(tpl.usages).forEach(function(key) {
+    var u = tpl.usages[key];
+    var rc = RATE_CARD.find(function(r){ return r.id === key; });
+    if (rc && u.active) total += (u.volume * u.freq / 1e6) * rc.rate;
+  });
+  return total;
+}
+
+function buildPrompt(description) {
+  var availableTypes = RATE_CARD.map(function(rc) {
+    return rc.id + ": " + rc.name + " (" + rc.rate + " credits per " + rc.unit + ") \u2014 " + rc.desc;
+  }).join("\n");
+  return "You are an expert Salesforce Data 360 (formerly Data Cloud) architect. " +
+    "A user describes a business use case. Your job is to configure a credit calculator " +
+    "by selecting the right usage types and estimating realistic volumes.\n\n" +
+    "Available usage types:\n" + availableTypes + "\n\n" +
+    "User's use case description:\n\"" + description + "\"\n\n" +
+    "Respond with ONLY a JSON object, no markdown, no backticks, no explanation. Schema:\n" +
+    "{\n" +
+    "  \"name\": \"Short use case name (3-5 words)\",\n" +
+    "  \"usages\": {\n" +
+    "    \"<usage_type_id>\": {\n" +
+    "      \"active\": true,\n" +
+    "      \"volume\": <number \u2014 ABSOLUTE number of rows/inferences per execution, NOT in millions>,\n" +
+    "      \"freq\": <number \u2014 executions per year: 1, 4, 12, 52, 365, or 730>,\n" +
+    "      \"growth\": <number \u2014 decimal YoY growth rate, e.g. 0.05 for 5%>\n" +
+    "    }\n" +
+    "  }\n" +
+    "}\n\n" +
+    "Rules:\n" +
+    "- Only include usage types that are clearly needed for this use case\n" +
+    "- volume must be the ABSOLUTE number of rows, inferences, or records per single execution \u2014 NOT in millions.\n" +
+    "  Example: 120,000 rows per execution = volume: 120000 (NOT 0.12).\n" +
+    "  The calculator divides by 1,000,000 internally when applying the multiplier.\n" +
+    "- Think step by step about realistic volumes:\n" +
+    "  * 10,000 monthly visitors \u00d7 5 page views = 50,000 events per month\n" +
+    "  * 3 million customer profiles \u00d7 5 data points each = 15,000,000 rows\n" +
+    "  * A segment targeting 500,000 customers = volume 500000\n" +
+    "- Volume estimates should be realistic for a mid-size enterprise (1-10M customer profiles) unless the user specifies otherwise\n" +
+    "- If the user mentions specific numbers (e.g. '10,000 visitors' or '3 million customers'), derive volumes from those numbers\n" +
+    "- Choose frequency based on the use case's natural rhythm:\n" +
+    "  * Real-time or streaming use cases: freq = 365 (daily) or 730 (bi-daily)\n" +
+    "  * Scheduled batch jobs (nightly syncs, daily scoring): freq = 365 or 52\n" +
+    "  * Campaign-driven activities (seasonal, periodic): freq = 12 or 52\n" +
+    "  * One-time data migrations or initial loads: freq = 1\n" +
+    "  * Do NOT default everything to monthly \u2014 match the business need described by the user\n" +
+    "- freq must be one of: 1, 4, 12, 52, 365, 730\n" +
+    "- growth should be between 0.0 and 0.3 \u2014 use 0.05 as default unless the user implies faster or slower growth\n" +
+    "- Do NOT include usage types that are not needed \u2014 fewer is better\n" +
+    "- Respond with ONLY the JSON object, nothing else\n\n" +
+    "Example: For 'daily churn prediction on 2 million customers':\n" +
+    "{\"name\":\"Daily Churn Prediction\",\"usages\":{\"batch_ci\":{\"active\":true,\"volume\":10000000,\"freq\":365,\"growth\":0.05},\"inferences\":{\"active\":true,\"volume\":2000000,\"freq\":365,\"growth\":0.05},\"segmentation\":{\"active\":true,\"volume\":2000000,\"freq\":365,\"growth\":0.05}}}";
+}
+
+function analyzeUseCase(description, key) {
+  return fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": key,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-direct-browser-access": "true"
+    },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-5-20250929",
+      max_tokens: 1024,
+      messages: [{ role: "user", content: buildPrompt(description) }]
+    })
+  }).then(function(resp) {
+    if (!resp.ok) {
+      return resp.json().catch(function() { return {}; }).then(function(b) {
+        throw new Error(b.error ? b.error.message : "API request failed (HTTP " + resp.status + ")");
+      });
+    }
+    return resp.json();
+  }).then(function(data) {
+    var text = data.content.filter(function(b){ return b.type==="text"; }).map(function(b){ return b.text; }).join("");
+    var clean = text.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+    var config = JSON.parse(clean);
+    if (!config || typeof config !== "object") throw new Error("AI response was not a valid object");
+    if (!config.usages || typeof config.usages !== "object") throw new Error("AI response missing usages");
+    var validIds = RATE_CARD.map(function(rc){ return rc.id; });
+    var filtered = {};
+    Object.keys(config.usages).forEach(function(k) {
+      if (validIds.indexOf(k) === -1) { console.warn("[AI] Unknown usage type, skipping:", k); return; }
+      var u = config.usages[k];
+      if (!u || typeof u !== "object") return;
+      filtered[k] = {
+        active: u.active !== false,
+        volume: Number(u.volume) || 0,
+        freq: Number(u.freq) || 365,
+        growth: Number(u.growth) || 0.05
+      };
+      if (filtered[k].volume > 0 && filtered[k].volume < 1000) filtered[k].volume = Math.round(filtered[k].volume * 1000000);
+    });
+    config.usages = filtered;
+    if (Object.keys(filtered).length === 0) throw new Error("AI did not select any valid usage types");
+    return config;
+  });
 }
 
 /* ── Components ────────────────────────────────────────── */
@@ -516,6 +898,9 @@ function BreakdownBar(props) {
 /* ── Main App ──────────────────────────────────────────── */
 
 function App() {
+  /* ── View state ──────────────────────────────────────── */
+  var _vw = React.useState("lobby"), view = _vw[0], setView = _vw[1];
+
   /* ── Global state ─────────────────────────────────────── */
   var _cp = React.useState(500), costPer100K = _cp[0], setCostPer100K = _cp[1];
   var _cu = React.useState("$"), currency = _cu[0], setCurrency = _cu[1];
@@ -536,14 +921,108 @@ function App() {
   var nameRef = React.useRef(null);
   var _io = React.useState(null), infoOpen = _io[0], setInfoOpen = _io[1];
   function toggleInfo(id) { setInfoOpen(function(prev){ return prev === id ? null : id; }); }
+  var _st = React.useState(false), showTemplates = _st[0], setShowTemplates = _st[1];
+  var _ak = React.useState(function(){ try { return localStorage.getItem("d360_api_key")||""; } catch(e){ return ""; } });
+  var apiKey = _ak[0], setApiKey = _ak[1];
+  var _ss = React.useState(false), showSettings = _ss[0], setShowSettings = _ss[1];
+  var _akDraft = React.useState(""), apiKeyDraft = _akDraft[0], setApiKeyDraft = _akDraft[1];
+  var _keyStatus = React.useState(null), keyStatus = _keyStatus[0], setKeyStatus = _keyStatus[1];
+  var _keyError = React.useState(false), keyError = _keyError[0], setKeyError = _keyError[1];
+  var _aiP = React.useState(""), aiPrompt = _aiP[0], setAiPrompt = _aiP[1];
+  var _aiL = React.useState(false), aiLoading = _aiL[0], setAiLoading = _aiL[1];
+  var _aiE = React.useState(null), aiError = _aiE[0], setAiError = _aiE[1];
 
   var activeUC = useCases.find(function(uc){ return uc.id === activeTab; }) || useCases[0];
+  if (!activeUC || !activeUC.usages) activeUC = { id:0, name:"", usages:freshUsages() };
 
-  function addUseCase() {
+  function addBlankUseCase() {
     var newId = _nextId.current++;
     setUseCases(function(prev){ return prev.concat([{ id:newId, name:"Use Case "+newId, usages:freshUsages() }]); });
     setActiveTab(newId);
+    setShowTemplates(false);
     setTimeout(function(){ if(nameRef.current) nameRef.current.focus(); }, 0);
+  }
+  function addFromTemplate(tpl) {
+    var newId = _nextId.current++;
+    var usages = freshUsages();
+    Object.keys(tpl.usages).forEach(function(k) {
+      if (usages[k]) usages[k] = Object.assign({}, usages[k], tpl.usages[k]);
+    });
+    setUseCases(function(prev){ return prev.concat([{ id:newId, name:tpl.name, usages:usages, fromTemplate:tpl.name, showTemplateBanner:true }]); });
+    setActiveTab(newId);
+    setShowTemplates(false);
+    setTimeout(function(){ if(nameRef.current) nameRef.current.focus(); }, 0);
+  }
+  function dismissBanner() {
+    setUseCases(function(prev) {
+      return prev.map(function(uc) {
+        if (uc.id !== activeTab) return uc;
+        return Object.assign({}, uc, { showTemplateBanner:false });
+      });
+    });
+  }
+  function lobbySelectTemplate(tpl) {
+    var newId = _nextId.current++;
+    var usages = freshUsages();
+    Object.keys(tpl.usages).forEach(function(k) {
+      if (usages[k]) usages[k] = Object.assign({}, usages[k], tpl.usages[k]);
+    });
+    setUseCases([{ id:newId, name:tpl.name, usages:usages, fromTemplate:tpl.name, showTemplateBanner:true }]);
+    setActiveTab(newId);
+    setView("workspace");
+  }
+  function lobbyStartBlank() {
+    var newId = _nextId.current++;
+    setUseCases([{ id:newId, name:"", usages:freshUsages() }]);
+    setActiveTab(newId);
+    setView("workspace");
+    setTimeout(function(){ if(nameRef.current) nameRef.current.focus(); }, 0);
+  }
+  function handleBackToLobby() {
+    if (!window.confirm("This will reset all use cases and start fresh. Continue?")) return;
+    _nextId.current = 2;
+    setUseCases([{ id:1, name:"", usages:freshUsages() }]);
+    setActiveTab(1);
+    setShowTemplates(false);
+    setView("lobby");
+  }
+  function handleAISubmit(isLobby) {
+    if (!apiKey) { openSettings(); return; }
+    if (!aiPrompt.trim()) return;
+    setAiLoading(true); setAiError(null);
+    analyzeUseCase(aiPrompt, apiKey).then(function(config) {
+      try {
+        var merged = freshUsages();
+        Object.keys(config.usages).forEach(function(k) {
+          if (merged[k]) merged[k] = Object.assign({}, merged[k], config.usages[k]);
+        });
+        var hasActive = Object.keys(merged).some(function(k){ return merged[k].active; });
+        if (!hasActive) {
+          setAiError("AI did not configure any usage types. Try a more specific description.");
+          setAiLoading(false);
+          return;
+        }
+        Object.keys(merged).forEach(function(k) {
+          var u = merged[k];
+          if (u.active && u.volume === 0) u.volume = 100000;
+        });
+        var newId = _nextId.current++;
+        var newUC = { id:newId, name:String(config.name||"AI-configured use case"), usages:merged, fromTemplate:"AI-configured", showTemplateBanner:true };
+        setActiveTab(newId);
+        if (isLobby) { setUseCases([newUC]); } else { setUseCases(function(prev){ return prev.concat([newUC]); }); }
+        setShowTemplates(false);
+        setView("workspace");
+        setAiLoading(false); setAiPrompt("");
+      } catch(ex) {
+        console.error("[AI] Config processing error:", ex);
+        setAiError("Failed to process AI response: " + ex.message);
+        setAiLoading(false);
+      }
+    }).catch(function(err) {
+      console.error("[AI] Request error:", err);
+      setAiError(err.message || "Something went wrong. Please try again.");
+      setAiLoading(false);
+    });
   }
   function deleteUseCase(id) {
     if (useCases.length <= 1) return;
@@ -616,37 +1095,231 @@ function App() {
     return t;
   }, [allCalcs]);
 
-  var activeCalc = allCalcs.find(function(c){ return c.id === activeTab; }) || allCalcs[0];
-  var activeCount = Object.keys(activeUC.usages).filter(function(k){ return activeUC.usages[k].active; }).length;
+  var emptyCalc = { id:0, name:"", results:[], totals:{ credits:[0,0,0], costs:[0,0,0] } };
+  var activeCalc = allCalcs.find(function(c){ return c.id === activeTab; }) || allCalcs[0] || emptyCalc;
+  var activeCount = activeUC.usages ? Object.keys(activeUC.usages).filter(function(k){ return activeUC.usages[k] && activeUC.usages[k].active; }).length : 0;
 
-  /* ── Render ───────────────────────────────────────────── */
-  return e("div", null,
-    /* Header */
-    e("div", { className:"header" },
-      e("div", { className:"container" },
-        e("div", { className:"header-inner" },
-          e("div", { className:"logo", dangerouslySetInnerHTML:{ __html:'<svg width="34" height="34" viewBox="-40 -40 80 80"><defs><linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00d2d2"/><stop offset="100%" stop-color="#0088ff"/></linearGradient></defs><ellipse cx="0" cy="0" rx="30" ry="30" fill="none" stroke="url(#lg)" stroke-width="3"/><circle cx="0" cy="0" r="16" fill="rgba(0,210,210,0.08)"/><text x="0" y="5" text-anchor="middle" font-family="Helvetica Neue,sans-serif" font-size="13" font-weight="700" fill="#00d2d2">360</text><circle cx="26" cy="-14" r="3" fill="#0088ff"/><circle cx="-8" cy="29" r="2.5" fill="#00d2d2"/><circle cx="-28" cy="-9" r="2" fill="#7c4dff"/></svg>' } }),
-          e("div", null,
-            e("h1", null, "Data 360 Credit Calculator"),
-            e("div", { className:"subtitle" }, "Based on official Salesforce Data Services Rate Card (Aug 2025) \u00b7 v2.0")
-          )
+  /* ── Shared render fragments ─────────────────────────── */
+  var headerEl = e("div", { className:"header" },
+    e("div", { className:"container" },
+      e("div", { className:"header-inner" },
+        e("div", { className:"logo", dangerouslySetInnerHTML:{ __html:'<svg width="34" height="34" viewBox="-40 -40 80 80"><defs><linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00d2d2"/><stop offset="100%" stop-color="#0088ff"/></linearGradient></defs><ellipse cx="0" cy="0" rx="30" ry="30" fill="none" stroke="url(#lg)" stroke-width="3"/><circle cx="0" cy="0" r="16" fill="rgba(0,210,210,0.08)"/><text x="0" y="5" text-anchor="middle" font-family="Helvetica Neue,sans-serif" font-size="13" font-weight="700" fill="#00d2d2">360</text><circle cx="26" cy="-14" r="3" fill="#0088ff"/><circle cx="-8" cy="29" r="2.5" fill="#00d2d2"/><circle cx="-28" cy="-9" r="2" fill="#7c4dff"/></svg>' } }),
+        e("div", null,
+          e("h1", null, "Data 360 Credit Calculator"),
+          e("div", { className:"subtitle" }, "Based on official Salesforce Data Services Rate Card (Aug 2025) \u00b7 v2.0")
+        ),
+        e("button", { className:"settings-toggle", onClick:openSettings },
+          e("svg", { width:"18", height:"18", viewBox:"0 0 24 24", fill:"none", stroke:"currentColor", strokeWidth:"2", strokeLinecap:"round", strokeLinejoin:"round" },
+            e("circle", { cx:"12", cy:"12", r:"3" }),
+            e("path", { d:"M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" })
+          ),
+          apiKey && e("span", { className:"key-indicator" })
         )
       )
+    )
+  );
+
+  React.useEffect(function() {
+    function onKey(ev) { if (ev.key === "Escape" && showSettings) closeSettings(); }
+    document.addEventListener("keydown", onKey);
+    return function() { document.removeEventListener("keydown", onKey); };
+  }, [showSettings]);
+  function openSettings() { setApiKeyDraft(apiKey); setKeyStatus(null); setKeyError(false); setShowSettings(true); }
+  function closeSettings() { setShowSettings(false); }
+  function saveKey() {
+    var k = apiKeyDraft.trim();
+    if (!k.startsWith("sk-ant-")) { setKeyError(true); return; }
+    setKeyError(false);
+    try { localStorage.setItem("d360_api_key", k); } catch(e){}
+    setApiKey(k); setKeyStatus("success");
+  }
+  function removeKey() {
+    try { localStorage.removeItem("d360_api_key"); } catch(e){}
+    setApiKey(""); setApiKeyDraft(""); setKeyStatus("removed");
+  }
+
+  var settingsModal = e("div", {
+    className:"modal-overlay"+(showSettings?" visible":""),
+    onClick:function(ev){ if(ev.target===ev.currentTarget) closeSettings(); }
+  },
+    e("div", { className:"modal" },
+      e("div", { className:"modal-title" },
+        e("svg", { viewBox:"0 0 24 24", fill:"none", stroke:"currentColor", strokeWidth:"2", strokeLinecap:"round", strokeLinejoin:"round" },
+          e("rect", { x:"3", y:"11", width:"18", height:"11", rx:"2" }),
+          e("path", { d:"M7 11V7a5 5 0 0 1 10 0v4" })
+        ),
+        "API Key Settings"
+      ),
+      e("div", { className:"modal-text" }, "The AI-powered use case configuration requires an Anthropic API key. Your key is stored in your browser\u2019s LocalStorage and sent directly to Anthropic\u2019s API \u2014 never to our servers."),
+      e("div", { className:"modal-text" }, e("strong", null, "Cost: "), "Approximately $0.01\u20130.03 per analysis, billed directly by Anthropic to your account."),
+      e("div", { className:"modal-input-group" },
+        e("label", { className:"modal-label" }, "Anthropic API Key"),
+        e("input", {
+          className:"modal-input"+(keyError?" error":""), type:"password",
+          placeholder:"sk-ant-...", autoComplete:"off",
+          value:apiKeyDraft, onChange:function(ev){ setApiKeyDraft(ev.target.value); setKeyError(false); }
+        }),
+        e("div", { className:"modal-error"+(keyError?" visible":"") }, "API key must start with sk-ant-")
+      ),
+      e("div", { className:"modal-actions" },
+        e("button", { className:"btn-primary", onClick:saveKey }, "Save Key Locally"),
+        apiKey && e("button", { className:"btn-ghost", onClick:removeKey }, "Remove Key"),
+        e("button", { className:"btn-ghost", onClick:closeSettings }, "Close")
+      ),
+      keyStatus && e("div", { className:"modal-status visible "+keyStatus },
+        keyStatus === "success" ? "API key saved to LocalStorage." : "API key removed from LocalStorage."
+      ),
+      e("a", { className:"modal-link", href:"https://console.anthropic.com/", target:"_blank", rel:"noopener" }, "Get an API key at console.anthropic.com \u2197")
+    )
+  );
+
+  var rateCardEl = e("div", { className:"card", style:{ marginTop:20 } },
+    e("div", { className:"card-label" }, "Rate Card Reference (Production)"),
+    e("div", { className:"table-wrap" },
+      e("table", { className:"table" },
+        e("thead", null,
+          e("tr", null,
+            e("th", null, "Usage Type"),
+            e("th", null, "Category"),
+            e("th", { className:"right" }, "Multiplier"),
+            e("th", null, "Unit")
+          )
+        ),
+        e("tbody", null,
+          RATE_CARD.map(function(rc) {
+            return e("tr", { key:rc.id },
+              e("td", { className:"name" }, rc.name),
+              e("td", { style:{ color:"var(--text-muted)" } }, rc.cat),
+              e("td", { className:"right accent" }, rc.rate.toLocaleString()),
+              e("td", { style:{ color:"var(--text-muted)" } }, rc.unit)
+            );
+          })
+        )
+      )
+    )
+  );
+
+  var footerEl = e("div", { className:"footer" },
+    e("div", { style:{ marginBottom:8 } },
+      e("strong", null, "Disclaimer: "),
+      "This calculator provides estimates based on the official Salesforce Data Services Rate Card (last updated August 2025). Actual consumption may vary. The cost per 100K credits and currency can be adjusted to match your negotiated contract rate. Salesforce ingestion from native connectors (Sales Cloud, Service Cloud, Marketing Cloud Engagement, Marketing Cloud Personalization, Commerce Cloud) is free since September 2025. Always verify contractual rates with your Salesforce Account Executive."
     ),
+    e("div", null,
+      "Built by ",
+      e("a", { href:"https://www.linkedin.com/in/annika-schuehle/", target:"_blank", rel:"noopener" }, "Annika Sch\u00fchle"),
+      " \u00b7 ",
+      e("a", { href:"https://www.linkedin.com/in/fabian-pfann-3265421a3/", target:"_blank", rel:"noopener" }, "Fabian Pfann"),
+      " \u00b7 ",
+      e("a", { href:"https://cramm.dev", target:"_blank", rel:"noopener" }, "Christopher Ramm"),
+      " \u00b7 Open Source under ",
+      e("a", { href:"https://github.com/rammc/data360-credit-calculator", target:"_blank", rel:"noopener" }, "MIT License")
+    ),
+    e("div", { className:"tm" }, "Salesforce, Data 360, and Data Cloud are trademarks of Salesforce, Inc. This project is not affiliated with or endorsed by Salesforce.")
+  );
+
+  function renderTemplateCard(tpl, onClick) {
+    var usageNames = Object.keys(tpl.usages).map(function(k) {
+      var rc = RATE_CARD.find(function(r){ return r.id===k; });
+      return rc ? rc.name : k;
+    });
+    var est = estimateTemplateCredits(tpl);
+    return e("div", { key:tpl.templateId, className:"template-card", onClick:onClick },
+      e("div", { className:"template-card-name" }, tpl.name),
+      e("div", { className:"template-card-desc" }, tpl.description),
+      e("div", { className:"template-card-tags" },
+        usageNames.map(function(n){ return e("span", { key:n, className:"template-card-tag" }, n); })
+      ),
+      e("div", { className:"template-card-estimate" }, "\u2248 "+fmtCr(est)+" credits/year at default volumes")
+    );
+  }
+
+  function renderAICard(isLobby) {
+    return e("div", { className:"ai-card" },
+      e("div", { className:"ai-card-header" },
+        e("span", { className:"ai-card-sparkle" }, "\u2728"),
+        e("div", { className:"ai-card-name" }, "Describe your use case")
+      ),
+      e("div", { className:"ai-card-desc" }, "Tell us what you want to achieve with Data 360 in plain language. AI will configure the calculator for you."),
+      e("textarea", {
+        className:"ai-textarea", disabled:aiLoading,
+        value:aiPrompt, onChange:function(ev){ setAiPrompt(ev.target.value); },
+        placeholder:"e.g. \"We want to proactively contact 3 million customers whose lease expires within 90 days. Customer data comes from SAP and Service Cloud. We need daily scoring and weekly segment activation to Marketing Cloud for email campaigns.\""
+      }),
+      e("div", { className:"ai-actions" },
+        apiKey
+          ? e("button", { className:"btn-ai", disabled:aiLoading||!aiPrompt.trim(), onClick:function(){ handleAISubmit(isLobby); } },
+              aiLoading && e("div", { className:"spinner" }),
+              aiLoading ? "Analyzing..." : "Configure with AI"
+            )
+          : e("button", { className:"btn-ai", onClick:openSettings }, "Set up API key first"),
+        e("div", { className:"ai-hint" },
+          apiKey
+            ? "Powered by Claude"
+            : e("span", null, "Requires an Anthropic API key \u2192 Set up in ", e("a", { onClick:openSettings }, "\u2699 Settings"))
+        )
+      ),
+      aiError && e("div", { className:"ai-error" }, aiError)
+    );
+  }
+
+  /* ── Render: Lobby ─────────────────────────────────────── */
+  if (view === "lobby") {
+    return e("div", null,
+      headerEl,
+      e("div", { className:"container" },
+        settingsModal,
+        /* Intro */
+        e("div", { className:"intro" },
+          e("p", null,
+            e("strong", null, "Purpose: "),
+            "This calculator estimates credit consumption and associated costs for Salesforce Data 360 use cases. It is based on the official Data Services Rate Card and helps architects, consultants, and business users plan and budget Data 360 implementations."
+          ),
+          e("p", null,
+            e("strong", null, "How to use: "),
+            "Select the usage types relevant to your use case, configure volume, frequency, and expected YoY growth. The calculator projects credit consumption and costs over three years. You can adjust the cost per 100K credits and currency to match your negotiated contract rate \u2014 the Salesforce list price is $500."
+          )
+        ),
+        /* Template grid */
+        e("div", { className:"lobby-section" },
+          e("div", { className:"lobby-heading" }, "Choose a starting point"),
+          e("div", { className:"lobby-subheading" }, "Pick a template to pre-fill your calculator with realistic estimates, or build your own from scratch."),
+          e("div", { className:"blank-card", onClick:lobbyStartBlank },
+            e("div", { className:"blank-card-icon" }, "\u270e"),
+            e("div", null,
+              e("div", { className:"blank-card-name" }, "Blank / Custom"),
+              e("div", { className:"blank-card-desc" }, "Start with a blank canvas. Select usage types and set your own volumes manually.")
+            )
+          ),
+          renderAICard(true),
+          TEMPLATE_CATEGORIES.map(function(cat) {
+            var catTemplates = TEMPLATES.filter(function(t){ return t.category === cat.id; });
+            if (!catTemplates.length) return null;
+            return e("div", { key:cat.id },
+              e("div", { className:"template-category" }, cat.label),
+              e("div", { className:"lobby-template-grid" },
+                catTemplates.map(function(tpl) {
+                  return renderTemplateCard(tpl, function(){ lobbySelectTemplate(tpl); });
+                })
+              )
+            );
+          })
+        ),
+        rateCardEl,
+        footerEl
+      )
+    );
+  }
+
+  /* ── Render: Workspace ─────────────────────────────────── */
+  return e("div", null,
+    headerEl,
 
     e("div", { className:"container" },
 
-      /* Intro */
-      e("div", { className:"intro" },
-        e("p", null,
-          e("strong", null, "Purpose: "),
-          "This calculator estimates credit consumption and associated costs for Salesforce Data 360 use cases. It is based on the official Data Services Rate Card and helps architects, consultants, and business users plan and budget Data 360 implementations."
-        ),
-        e("p", null,
-          e("strong", null, "How to use: "),
-          "Select the usage types relevant to your use case, configure volume, frequency, and expected YoY growth. The calculator projects credit consumption and costs over three years. You can adjust the cost per 100K credits and currency to match your negotiated contract rate \u2014 the Salesforce list price is $500."
-        )
-      ),
+      settingsModal,
+
+      /* Back to lobby */
+      e("button", { className:"back-to-lobby", onClick:handleBackToLobby }, "\u2190 New calculation"),
 
       /* Top bar – global params only */
       e("div", { className:"top-bar" },
@@ -729,7 +1402,7 @@ function App() {
           return e("button", {
             key:uc.id,
             className:"tab"+(uc.id===activeTab?" active":""),
-            onClick:function(){ setActiveTab(uc.id); }
+            onClick:function(){ setActiveTab(uc.id); setShowTemplates(false); }
           },
             e("span", null, uc.name || "Use Case "+uc.id),
             useCases.length > 1 && e("button", {
@@ -738,11 +1411,47 @@ function App() {
             }, "\u00d7")
           );
         }),
-        e("button", { className:"tab-add", onClick:addUseCase }, "+ Add use case")
+        e("button", { className:"tab-add", onClick:function(){ setShowTemplates(true); } }, "+ Add use case")
+      ),
+
+      /* Template dialog */
+      showTemplates && e("div", { className:"template-dialog" },
+        e("div", { className:"template-dialog-header" }, "Choose a starting point"),
+        e("div", { className:"template-dialog-hint" }, "Templates provide realistic starting configurations for common Data 360 scenarios. All values are estimates \u2014 adjust volumes and frequencies to match your specific implementation."),
+        e("div", { className:"blank-card", onClick:addBlankUseCase },
+          e("div", { className:"blank-card-icon" }, "\u270e"),
+          e("div", null,
+            e("div", { className:"blank-card-name" }, "Blank / Custom"),
+            e("div", { className:"blank-card-desc" }, "Start with a blank canvas. Select usage types and set your own volumes manually.")
+          )
+        ),
+        renderAICard(false),
+        TEMPLATE_CATEGORIES.map(function(cat) {
+          var catTemplates = TEMPLATES.filter(function(t){ return t.category === cat.id; });
+          if (!catTemplates.length) return null;
+          return e("div", { key:cat.id },
+            e("div", { className:"template-category" }, cat.label),
+            e("div", { className:"template-grid" },
+              catTemplates.map(function(tpl) {
+                return renderTemplateCard(tpl, function(){ addFromTemplate(tpl); });
+              })
+            )
+          );
+        })
+      ),
+
+      /* Template banner */
+      !showTemplates && activeUC.showTemplateBanner && activeUC.fromTemplate && e("div", { className:"template-banner" },
+        e("span", null,
+          activeUC.fromTemplate === "AI-configured"
+            ? "This use case was configured by AI based on your description. All values are estimates \u2014 review and adjust them to match your implementation."
+            : ["This use case was created from the ", e("strong", { key:"t" }, activeUC.fromTemplate), " template. All values are starting estimates \u2014 adjust them to match your implementation."]
+        ),
+        e("button", { className:"template-banner-close", onClick:dismissBanner }, "\u00d7")
       ),
 
       /* Use case name */
-      e("div", { style:{ marginBottom:20 } },
+      !showTemplates && e("div", { style:{ marginBottom:20 } },
         e("label", { className:"label" }, "Use Case Name"),
         e("input", {
           ref:nameRef,
@@ -753,15 +1462,15 @@ function App() {
       ),
 
       /* Section heading */
-      e("h2", { className:"section-title" }, "Usage Types"),
-      e("div", { className:"section-sub" },
+      !showTemplates && e("h2", { className:"section-title" }, "Usage Types"),
+      !showTemplates && e("div", { className:"section-sub" },
         activeCount > 0
           ? "Toggle usage types relevant to your use case. "+activeCount+" active."
           : "Toggle usage types relevant to your use case to get started."
       ),
 
       /* Usage types by category */
-      CATEGORIES.map(function(cat) {
+      !showTemplates && CATEGORIES.map(function(cat) {
         var items = RATE_CARD.filter(function(rc){ return rc.cat===cat; });
         if (!items.length) return null;
         return e("div", { key:cat, style:{ marginBottom:24 } },
@@ -777,7 +1486,7 @@ function App() {
       }),
 
       /* Detailed breakdown – active UC */
-      activeCalc.results.length > 0 && e("div", { className:"card", style:{ marginTop:36 } },
+      !showTemplates && activeCalc.results.length > 0 && e("div", { className:"card", style:{ marginTop:36 } },
         e("div", { className:"card-label" }, "Detailed Breakdown"+(activeUC.name?" \u2013 "+activeUC.name:"")),
         e("div", { className:"table-wrap" },
           e("table", { className:"table" },
@@ -810,56 +1519,44 @@ function App() {
         )
       ),
 
-      /* Rate card reference */
-      e("div", { className:"card", style:{ marginTop:20 } },
-        e("div", { className:"card-label" }, "Rate Card Reference (Production)"),
-        e("div", { className:"table-wrap" },
-          e("table", { className:"table" },
-            e("thead", null,
-              e("tr", null,
-                e("th", null, "Usage Type"),
-                e("th", null, "Category"),
-                e("th", { className:"right" }, "Multiplier"),
-                e("th", null, "Unit")
-              )
-            ),
-            e("tbody", null,
-              RATE_CARD.map(function(rc) {
-                return e("tr", { key:rc.id },
-                  e("td", { className:"name" }, rc.name),
-                  e("td", { style:{ color:"var(--text-muted)" } }, rc.cat),
-                  e("td", { className:"right accent" }, rc.rate.toLocaleString()),
-                  e("td", { style:{ color:"var(--text-muted)" } }, rc.unit)
-                );
-              })
-            )
-          )
-        )
-      ),
-
-      /* Footer */
-      e("div", { className:"footer" },
-        e("div", { style:{ marginBottom:8 } },
-          e("strong", null, "Disclaimer: "),
-          "This calculator provides estimates based on the official Salesforce Data Services Rate Card (last updated August 2025). Actual consumption may vary. The cost per 100K credits and currency can be adjusted to match your negotiated contract rate. Salesforce ingestion from native connectors (Sales Cloud, Service Cloud, Marketing Cloud Engagement, Marketing Cloud Personalization, Commerce Cloud) is free since September 2025. Always verify contractual rates with your Salesforce Account Executive."
-        ),
-        e("div", null,
-          "Built by ",
-          e("a", { href:"https://www.linkedin.com/in/annika-schuehle/", target:"_blank", rel:"noopener" }, "Annika Sch\u00fchle"),
-          " \u00b7 ",
-          e("a", { href:"https://www.linkedin.com/in/fabian-pfann-3265421a3/", target:"_blank", rel:"noopener" }, "Fabian Pfann"),
-          " \u00b7 ",
-          e("a", { href:"https://cramm.dev", target:"_blank", rel:"noopener" }, "Christopher Ramm"),
-          " \u00b7 Open Source under ",
-          e("a", { href:"https://github.com/rammc/data360-credit-calculator", target:"_blank", rel:"noopener" }, "MIT License")
-        ),
-        e("div", { className:"tm" }, "Salesforce, Data 360, and Data Cloud are trademarks of Salesforce, Inc. This project is not affiliated with or endorsed by Salesforce.")
-      )
+      rateCardEl,
+      footerEl
     )
   );
 }
 
-ReactDOM.createRoot(document.getElementById("app")).render(e(App));
+/* ── Error Boundary ────────────────────────────────────── */
+var _crashError = null;
+function ErrorBoundary(props) {
+  React.Component.call(this, props);
+  this.state = { hasError: false };
+}
+ErrorBoundary.prototype = Object.create(React.Component.prototype);
+ErrorBoundary.prototype.constructor = ErrorBoundary;
+ErrorBoundary.getDerivedStateFromError = function(error) { _crashError = error; return { hasError: true }; };
+ErrorBoundary.prototype.componentDidCatch = function(error, info) {
+  console.error("[D360 Crash]", error, info);
+};
+ErrorBoundary.prototype.render = function() {
+  if (this.state.hasError) {
+    var msg = _crashError ? _crashError.toString() : "Unknown error";
+    var stack = _crashError && _crashError.stack ? _crashError.stack.split("\n").slice(0,8).join("\n") : "";
+    return e("div", { style:{ minHeight:"100vh", display:"flex", alignItems:"center", justifyContent:"center", fontFamily:"'DM Sans',sans-serif" } },
+      e("div", { style:{ maxWidth:600, padding:"0 24px" } },
+        e("div", { style:{ fontSize:48, marginBottom:16, textAlign:"center" } }, "\u26a0\ufe0f"),
+        e("div", { style:{ fontSize:16, fontWeight:600, color:"#e8eaed", marginBottom:8, textAlign:"center" } }, "Something went wrong"),
+        e("div", { style:{ fontSize:13, color:"#ff6b6b", lineHeight:1.6, marginBottom:12, padding:"12px 16px", background:"rgba(255,107,107,0.1)", border:"1px solid rgba(255,107,107,0.2)", borderRadius:8, fontFamily:"'JetBrains Mono',monospace", wordBreak:"break-word" } }, msg),
+        stack && e("pre", { style:{ fontSize:10, color:"rgba(255,255,255,0.3)", lineHeight:1.5, marginBottom:16, whiteSpace:"pre-wrap", wordBreak:"break-all" } }, stack),
+        e("div", { style:{ textAlign:"center" } },
+          e("button", { onClick:function(){ window.location.reload(); }, style:{ background:"#00d2d2", color:"#0a0e17", border:"none", borderRadius:8, padding:"10px 24px", fontSize:13, fontWeight:600, cursor:"pointer" } }, "Reload page")
+        )
+      )
+    );
+  }
+  return this.props.children;
+};
+
+ReactDOM.createRoot(document.getElementById("app")).render(e(ErrorBoundary, null, e(App)));
 </script>
 </body>
 </html>
