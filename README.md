@@ -12,10 +12,13 @@ Salesforce Data 360 operates on a consumption-based pricing model where differen
 
 This calculator helps architects, consultants, and business users:
 
+- **Start from templates** — 11 pre-configured scenarios for common Data 360 use cases (from CDP setup to AI-powered service agents)
+- **AI-powered configuration** — Describe your use case in plain language and let Claude configure the calculator automatically
 - **Estimate credit consumption** across 10 usage types from the official Data Services Rate Card
-- **Project costs over 3 years** with configurable YoY growth rates
+- **Configure multiple use cases** — Compare credit consumption across different use cases side by side
+- **Project costs over 3 years** with configurable YoY growth rates and custom currency/pricing
 - **Account for testing overhead** with adjustable test volume and test run parameters
-- **Compare usage type distribution** via an interactive breakdown visualization
+- **Understand what each usage type means** — Business-friendly explanations, examples, and volume hints for every service
 
 ## Rate Card Source
 
@@ -54,10 +57,10 @@ Total Rows = (Volume × Frequency) + (Volume × Test Volume % × Test Runs per Y
 ### Cost Calculation
 
 ```
-Cost = (Credits / 100,000) × $500
+Cost = (Credits / 100,000) × Cost per 100K Credits
 ```
 
-The list price is **$500 per 100,000 Data Service Credits**. If you have a negotiated rate, adjust the result accordingly.
+The Salesforce list price is **$500 per 100,000 Data Service Credits**. The calculator allows you to set a custom price and currency (USD, EUR, GBP, CHF, JPY) to match your negotiated contract rate.
 
 ### Year-over-Year Growth
 
@@ -73,23 +76,48 @@ Year N+1 = Year N × (1 + Growth Rate)
 
 Visit **[rammc.github.io/data360-credit-calculator](https://rammc.github.io/data360-credit-calculator/)** — nothing to install.
 
-### AI-powered configuration (optional)
+The calculator opens with a **template lobby** — pick a pre-configured scenario or start blank. You can add multiple use cases and compare them side by side.
 
-You can describe your use case in plain language and let Claude configure the
-calculator for you. This feature requires an Anthropic API key.
+### Use Case Templates
 
-1. Click the gear icon in the header and enter your API key
-2. Click "Describe your use case" in the lobby
+11 templates cover common Data 360 scenarios:
+
+**Getting Started:**
+- Proactive Service
+- Personalized Marketing Journey
+- Lead & Opportunity Scoring
+- Real-Time Personalization
+- Data Foundation / CDP Setup
+- AI-Powered Service Agents
+
+**Advanced Scenarios:**
+- Historical Data Migration
+- High-Frequency Web & App Events
+- Complex Identity Resolution
+- Cross-Cloud Activation (Batch vs. Streaming)
+- RAG & Unstructured Data for AI
+
+Each template pre-configures relevant usage types with realistic volumes for a mid-size enterprise. All values are adjustable after selection.
+
+### AI-Powered Configuration (optional)
+
+Describe your use case in plain language and let Claude configure the calculator for you. This feature requires an Anthropic API key (BYOK).
+
+1. Click ⚙ in the header and enter your Anthropic API key
+2. Use the "Describe your use case" card in the lobby
 3. Describe what you want to achieve — the more specific, the better
-4. Claude will select usage types and estimate volumes based on your description
+4. Claude selects usage types and estimates volumes based on your description
 
-**Privacy:** Your API key is stored in browser memory only — it is never saved
-to disk, cookies, or localStorage. The key is lost on page reload. API calls go
-directly from your browser to `api.anthropic.com`. No data passes through our
-servers (there are no servers — this is a static GitHub Pages site).
+**Privacy:** Your API key is stored in your browser's LocalStorage only. It is never sent to our servers — API calls go directly from your browser to `api.anthropic.com`. This is a static GitHub Pages site with no backend.
 
-**Cost:** Each AI configuration request costs approximately $0.01-0.03 in
-Anthropic API credits, depending on the length of your description.
+**Cost:** Each AI configuration request costs approximately $0.01–0.03 in Anthropic API credits, depending on the length of your description.
+
+### Multi-Use-Case Support
+
+You can configure multiple use cases in parallel (e.g., "Proactive Service" + "Lead Scoring") and see:
+- Total credits and costs aggregated across all use cases
+- A comparison table showing each use case's contribution
+- Credit distribution breakdown by use case and by usage type
 
 ### Option 2: Run locally
 
@@ -130,9 +158,10 @@ The calculator is intentionally built as a **single HTML file** with no build st
 
 This calculator provides **estimates only**. Actual credit consumption depends on your specific implementation, data volumes, and processing patterns. Key things to keep in mind:
 
-- The **list price** of $500/100K credits is used. Your contractual rate may differ.
+- The **list price** of $500/100K credits is the default. You can configure your negotiated rate.
 - **Sandbox environments** have a 20% discount on multipliers (not reflected in this calculator).
 - Salesforce may **update rates** at any time. Check the [official rate card](https://www.salesforce.com/data/rates/multipliers/) for the latest.
+- AI-generated configurations are starting estimates — always review and adjust.
 - This tool is **not affiliated with or endorsed by Salesforce, Inc.**
 
 Always verify estimates with your Salesforce Account Executive before making purchasing decisions.
@@ -143,6 +172,8 @@ Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
 
 Common contributions that would be valuable:
 - Rate card updates when Salesforce publishes new multipliers
+- New use case templates (see CONTRIBUTING.md for template format)
+- AI prompt improvements for better configuration accuracy
 - Additional usage types
 - Sandbox multiplier toggle
 - Export functionality (PDF/CSV)
@@ -162,10 +193,9 @@ Salesforce Certified Technical Architect (CTA) · Salesforce MVP (Class of 2025)
 - Website: [cramm.dev](https://cramm.dev)
 - GitHub: [@rammc](https://github.com/rammc)
 
-## Disclaimer
+## Built with AI Assistance
 
-Built with AI assistance
-This repository was developed with support from AI tools (Claude by Anthropic) for code generation, documentation, and architecture documentation. All content has been reviewed, validated, and curated by the author. The architectural decisions, patterns, and recommendations reflect real-world enterprise experience.
+This repository was developed with support from AI tools (Claude by Anthropic) for code generation, documentation, and architecture. All content has been reviewed, validated, and curated by the authors.
 
 ## License
 
