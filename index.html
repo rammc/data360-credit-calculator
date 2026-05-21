@@ -9,6 +9,16 @@
   <meta property="og:title" content="Data 360 Credit Calculator" />
   <meta property="og:description" content="Estimate Salesforce Data 360 credit consumption and costs for your use cases." />
   <meta property="og:type" content="website" />
+  <script>
+  (function(){
+    try {
+      var t = localStorage.getItem("data360-theme");
+      if (t === "light" || t === "dark") {
+        document.documentElement.setAttribute("data-theme", t);
+      }
+    } catch(e) {}
+  })();
+  </script>
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='-42 -42 84 84'%3E%3Crect x='-42' y='-42' width='84' height='84' rx='16' fill='%230c1424'/%3E%3Cellipse cx='0' cy='0' rx='30' ry='30' fill='none' stroke='%2300d2d2' stroke-width='3'/%3E%3Ccircle cx='0' cy='0' r='16' fill='rgba(0,210,210,0.08)'/%3E%3Ctext x='0' y='5' text-anchor='middle' font-family='sans-serif' font-size='13' font-weight='700' fill='%2300d2d2'%3E360%3C/text%3E%3Ccircle cx='26' cy='-14' r='3' fill='%230088ff'/%3E%3Ccircle cx='-8' cy='29' r='2.5' fill='%2300d2d2'/%3E%3C/svg%3E" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -17,33 +27,39 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #0a0e17;
-      --surface: rgba(255,255,255,0.03);
-      --surface-hover: rgba(255,255,255,0.05);
-      --border: rgba(255,255,255,0.08);
-      --border-subtle: rgba(255,255,255,0.04);
-      --text: #e8eaed;
-      --text-muted: rgba(255,255,255,0.45);
-      --text-faint: rgba(255,255,255,0.3);
-      --text-ghost: rgba(255,255,255,0.15);
-      --accent: #00d2d2;
-      --accent-muted: rgba(0,210,210,0.6);
-      --accent-bg: rgba(0,210,210,0.08);
-      --accent-border: rgba(0,210,210,0.2);
-      --blue: #0088ff;
-      --purple: #7c4dff;
+      color-scheme: light dark;
+      --bg: light-dark(#fafaf7, #0a0e17);
+      --surface: light-dark(#ffffff, rgba(255,255,255,0.03));
+      --surface-hover: light-dark(#f5f5f1, rgba(255,255,255,0.05));
+      --border: light-dark(rgba(0,0,0,0.08), rgba(255,255,255,0.08));
+      --border-subtle: light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.04));
+      --text: light-dark(#1a1a1a, #e8eaed);
+      --text-muted: light-dark(rgba(0,0,0,0.55), rgba(255,255,255,0.45));
+      --text-faint: light-dark(rgba(0,0,0,0.4), rgba(255,255,255,0.3));
+      --text-ghost: light-dark(rgba(0,0,0,0.2), rgba(255,255,255,0.15));
+      --accent: light-dark(#007f7f, #00d2d2);
+      --accent-muted: light-dark(rgba(0,127,127,0.85), rgba(0,210,210,0.6));
+      --accent-bg: light-dark(rgba(0,127,127,0.08), rgba(0,210,210,0.08));
+      --accent-border: light-dark(rgba(0,127,127,0.25), rgba(0,210,210,0.2));
+      --blue: light-dark(#0066cc, #0088ff);
+      --purple: light-dark(#6240e0, #7c4dff);
+      --glow-1: light-dark(transparent, rgba(0,210,210,0.05));
+      --glow-2: light-dark(transparent, rgba(0,136,255,0.03));
+      --chart-grid: light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.05));
       --font-body: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
       --radius: 12px;
       --radius-sm: 8px;
     }
+    html[data-theme="light"] { color-scheme: light; }
+    html[data-theme="dark"] { color-scheme: dark; }
 
     body {
       font-family: var(--font-body);
       background: var(--bg);
       background-image:
-        radial-gradient(ellipse at 20% 0%, rgba(0,210,210,0.05) 0%, transparent 60%),
-        radial-gradient(ellipse at 80% 100%, rgba(0,136,255,0.03) 0%, transparent 50%);
+        radial-gradient(ellipse at 20% 0%, var(--glow-1) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 100%, var(--glow-2) 0%, transparent 50%);
       color: var(--text);
       line-height: 1.5;
       min-height: 100vh;
@@ -67,8 +83,8 @@
     }
     .logo svg { display: block; }
     .header h1 {
-      font-size: 22px; font-weight: 700; letter-spacing: -0.03em;
-      background: linear-gradient(90deg, var(--text), rgba(255,255,255,0.65));
+      font-size: clamp(18px, 3vw, 22px); font-weight: 700; letter-spacing: -0.03em;
+      background: linear-gradient(90deg, var(--text), var(--text-muted));
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
     .header .subtitle { font-size: 12px; color: var(--text-faint); margin-top: 2px; }
@@ -80,8 +96,8 @@
       margin-bottom: 5px;
     }
     .input, .select {
-      width: 100%; background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.1); border-radius: var(--radius-sm);
+      width: 100%; background: light-dark(rgba(0,0,0,0.04), rgba(255,255,255,0.06));
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
       padding: 9px 12px; color: var(--text);
       font: 13px/1.4 var(--font-mono); outline: none;
       transition: border-color 0.2s;
@@ -89,11 +105,11 @@
     .input:focus, .select:focus { border-color: var(--accent); }
     .input::placeholder { color: var(--text-ghost); }
     .select { cursor: pointer; appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.3)' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
       background-repeat: no-repeat; background-position: right 10px center;
       padding-right: 30px;
     }
-    .select option { background: #1a1f2e; color: var(--text); }
+    .select option { background: light-dark(#ffffff, #1a1f2e); color: var(--text); }
 
     /* Intro */
     .intro {
@@ -180,7 +196,7 @@
     .dist-legend { display: flex; flex-wrap: wrap; gap: 6px 16px; }
     .dist-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: var(--text-muted); }
     .dist-legend-dot { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
-    .dist-legend-val { font-family: var(--font-mono); color: rgba(255,255,255,0.65); }
+    .dist-legend-val { font-family: var(--font-mono); color: var(--text-muted); }
 
     /* Category heading */
     .cat-heading {
@@ -243,7 +259,7 @@
     .toggle {
       width: 42px; height: 24px; border-radius: 12px; border: none;
       cursor: pointer; position: relative; transition: background 0.2s;
-      flex-shrink: 0; background: rgba(255,255,255,0.12);
+      flex-shrink: 0; background: light-dark(rgba(0,0,0,0.18), rgba(255,255,255,0.12));
     }
     .toggle.on { background: var(--accent); }
     .toggle-dot {
@@ -262,15 +278,15 @@
       border-bottom: 1px solid rgba(255,255,255,0.1);
     }
     .table th.right, .table td.right { text-align: right; }
-    .table td { padding: 10px 12px; color: rgba(255,255,255,0.7); border-bottom: 1px solid var(--border-subtle); }
+    .table td { padding: 10px 12px; color: var(--text-muted); border-bottom: 1px solid var(--border-subtle); }
     .table td.name { font-family: var(--font-body); font-weight: 500; }
     .table td.accent { color: rgba(0,210,210,0.8); }
-    .table tr.total td { border-top: 2px solid rgba(255,255,255,0.15); font-weight: 700; border-bottom: none; }
+    .table tr.total td { border-top: 2px solid light-dark(rgba(0,0,0,0.2), rgba(255,255,255,0.15)); font-weight: 700; border-bottom: none; }
     .table tr.total td.accent { color: var(--accent); }
 
     /* Section heading */
     .section-title {
-      font-size: 15px; font-weight: 600; color: rgba(255,255,255,0.6);
+      font-size: clamp(14px, 2vw, 16px); font-weight: 600; color: var(--text-muted);
       letter-spacing: -0.01em; margin: 0 0 6px 0;
     }
     .section-sub { font-size: 12px; color: var(--text-faint); margin-bottom: 20px; }
@@ -505,7 +521,8 @@
     }
     .ai-textarea {
       width: 100%; min-height: 100px; resize: vertical;
-      background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1);
+      background: light-dark(rgba(0,0,0,0.03), rgba(255,255,255,0.04));
+      border: 1px solid var(--border);
       border-radius: var(--radius-sm); padding: 12px 14px; color: var(--text);
       font-family: var(--font-body); font-size: 13px; line-height: 1.6; outline: none;
       transition: border-color 0.2s;
@@ -534,7 +551,361 @@
       border-top-color: #fff; border-radius: 50%; animation: spin 0.6s linear infinite;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-  </style>
+
+    /* AI mode tabs */
+    .ai-mode-tabs {
+      display: flex; gap: 4px; margin-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+    }
+    .ai-mode-tab {
+      background: none; border: none; padding: 8px 14px;
+      font-family: var(--font-body); font-size: 12px; font-weight: 500;
+      color: var(--text-muted); cursor: pointer;
+      border-bottom: 2px solid transparent; transition: all 0.2s;
+    }
+    .ai-mode-tab.active {
+      color: rgba(124,77,255,0.9);
+      border-bottom-color: rgba(124,77,255,0.6);
+    }
+    .ai-mode-tab:hover:not(.active) { color: var(--text); }
+
+    /* Guided conversation view */
+    .conv-turn {
+      margin-bottom: 14px; padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body); font-size: 13px; line-height: 1.6;
+    }
+    .conv-turn.user {
+      background: rgba(255,255,255,0.04);
+      border-left: 2px solid rgba(255,255,255,0.2);
+    }
+    .conv-turn.assistant {
+      background: rgba(124,77,255,0.06);
+      border-left: 2px solid rgba(124,77,255,0.4);
+    }
+    .conv-turn-label {
+      font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-faint); margin-bottom: 6px;
+    }
+    .conv-turn.user .conv-turn-label { color: rgba(255,255,255,0.4); }
+    .conv-turn.assistant .conv-turn-label { color: rgba(124,77,255,0.7); }
+    .conv-turn-content { color: var(--text); white-space: pre-wrap; }
+
+    .guided-thinking {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 14px;
+      font-family: var(--font-body); font-size: 13px;
+      color: var(--text-muted); font-style: italic;
+    }
+    .guided-actions {
+      display: flex; align-items: center; gap: 10px; margin-top: 12px;
+    }
+
+    /* Shared toggle */
+    .shared-toggle-row {
+      display: flex; align-items: center; gap: 12px;
+      margin-top: 14px; padding-top: 14px;
+      border-top: 1px dashed var(--border-subtle);
+    }
+    .shared-toggle-row .toggle { transform: scale(0.85); }
+    .shared-toggle-text { flex: 1; min-width: 0; }
+    .shared-toggle-label {
+      font-family: var(--font-body); font-size: 12px; font-weight: 500;
+      color: var(--text);
+    }
+    .shared-toggle-desc {
+      font-family: var(--font-body); font-size: 11px; color: var(--text-faint);
+      margin-top: 2px;
+    }
+    .shared-hint-banner {
+      margin-top: 10px; padding: 10px 12px;
+      background: var(--accent-bg); border: 1px solid var(--accent-border);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body); font-size: 11px; line-height: 1.55;
+      color: var(--text-muted);
+    }
+    .shared-badge {
+      display: inline-block; margin-left: 6px;
+      font-family: var(--font-mono); font-size: 10px;
+      color: var(--accent-muted); letter-spacing: 0.04em;
+    }
+    .shared-sum-note {
+      margin-bottom: 14px; padding: 10px 14px;
+      background: rgba(255,255,255,0.02);
+      border-left: 2px solid var(--accent-border);
+      border-radius: 0 6px 6px 0;
+      font-family: var(--font-body); font-size: 11px; line-height: 1.6;
+      color: var(--text-muted);
+    }
+    .shared-sum-note strong { color: var(--text); font-weight: 500; }
+    .table td.shared-cost { color: rgba(255,255,255,0.45); }
+
+    /* Business Case section */
+    .bc-section {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 14px; margin-top: 36px; margin-bottom: 20px;
+      overflow: hidden;
+    }
+    .bc-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 22px; cursor: pointer; transition: background 0.2s;
+    }
+    .bc-header:hover { background: rgba(255,255,255,0.02); }
+    .bc-header-content { display: flex; flex-direction: column; gap: 4px; }
+    .bc-header-title {
+      font-family: var(--font-body); font-size: 15px; font-weight: 600;
+      color: var(--text); display: flex; align-items: center; gap: 10px;
+    }
+    .bc-beta-badge {
+      font-family: var(--font-mono); font-size: 10px;
+      color: rgba(124,77,255,0.9); background: rgba(124,77,255,0.12);
+      padding: 2px 8px; border-radius: 4px;
+      text-transform: uppercase; letter-spacing: 0.06em;
+    }
+    .bc-header-sub {
+      font-family: var(--font-body); font-size: 12px; color: var(--text-faint);
+    }
+    .bc-toggle {
+      font-family: var(--font-body); font-size: 12px; color: var(--text-muted);
+      background: none; border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--radius-sm); padding: 6px 12px; cursor: pointer;
+    }
+    .bc-toggle:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
+    .bc-body { padding: 0 22px 24px 22px; border-top: 1px solid var(--border); }
+    .bc-disclaimer {
+      margin: 18px 0 24px 0; padding: 12px 16px;
+      background: rgba(124,77,255,0.06);
+      border: 1px solid rgba(124,77,255,0.15);
+      border-radius: var(--radius-sm);
+      font-family: var(--font-body); font-size: 12px;
+      line-height: 1.6; color: var(--text-muted);
+    }
+    .bc-disclaimer strong { color: var(--text); }
+    .bc-section-heading {
+      font-family: var(--font-body); font-size: 11px; font-weight: 600;
+      color: var(--accent-muted); text-transform: uppercase;
+      letter-spacing: 0.1em; margin-top: 24px; margin-bottom: 14px;
+    }
+    .bc-section-heading:first-of-type { margin-top: 16px; }
+    .bc-input-grid-3 {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;
+    }
+    @media (max-width: 640px) { .bc-input-grid-3 { grid-template-columns: 1fr; } }
+    .bc-money-wrap { position: relative; }
+    .bc-money-wrap .bc-money-sign {
+      position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+      color: var(--text-faint); font: 12px var(--font-mono); pointer-events: none;
+    }
+    .bc-money-wrap .input { padding-left: 28px; }
+    .bc-uc-benefit-row {
+      display: grid; grid-template-columns: 2fr 1fr 1fr 1fr;
+      gap: 8px; align-items: center;
+      padding: 8px 0; border-bottom: 1px solid var(--border-subtle);
+    }
+    .bc-uc-benefit-row.head {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 6px;
+    }
+    .bc-uc-benefit-row.head > div {
+      font-family: var(--font-body); font-size: 10px;
+      text-transform: uppercase; letter-spacing: 0.06em;
+      color: var(--text-muted); font-weight: 600;
+    }
+    .bc-uc-benefit-row.head > div.right { text-align: right; }
+    .bc-uc-benefit-row:last-child { border-bottom: none; }
+    .bc-uc-name {
+      font-family: var(--font-body); font-size: 13px; color: var(--text);
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .bc-metrics-grid {
+      display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;
+      margin: 24px 0;
+    }
+    @media (max-width: 640px) { .bc-metrics-grid { grid-template-columns: 1fr; } }
+    .bc-metric {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 16px 18px;
+    }
+    .bc-metric-label {
+      font-family: var(--font-body); font-size: 11px; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      font-weight: 500; margin-bottom: 8px;
+    }
+    .bc-metric-value {
+      font-family: var(--font-mono); font-size: 24px; font-weight: 600;
+      color: var(--text); letter-spacing: -0.02em; margin-bottom: 4px;
+    }
+    .bc-metric-value.negative { color: #ff8a8a; }
+    .bc-metric-sub {
+      font-family: var(--font-body); font-size: 11px; color: var(--text-faint);
+    }
+    .bc-chart-card {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 18px 20px; margin-bottom: 16px;
+    }
+    .bc-chart-label {
+      font-family: var(--font-body); font-size: 11px; color: var(--text-muted);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      font-weight: 500; margin-bottom: 14px;
+    }
+    .bc-chart-container { position: relative; width: 100%; height: 260px; }
+    .bc-advanced-toggle {
+      font-family: var(--font-body); font-size: 12px;
+      color: var(--accent-muted); cursor: pointer;
+      background: none; border: none; padding: 0; margin-bottom: 12px;
+    }
+    .bc-advanced-toggle:hover { color: var(--accent); }
+    .bc-advanced-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+    }
+    @media (max-width: 640px) { .bc-advanced-grid { grid-template-columns: 1fr 1fr; } }
+    .bc-empty {
+      padding: 32px 18px; text-align: center;
+      font-family: var(--font-body); font-size: 13px; color: var(--text-muted);
+      background: light-dark(rgba(0,0,0,0.02), rgba(255,255,255,0.02));
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+    }
+
+    /* Theme toggle button */
+    .theme-toggle {
+      background: var(--surface); border: 1px solid var(--border);
+      color: var(--text-faint);
+      width: 36px; height: 36px; border-radius: 10px;
+      cursor: pointer; display: flex; align-items: center; justify-content: center;
+      transition: all 0.2s; flex-shrink: 0;
+      margin-left: auto;
+    }
+    .theme-toggle + .settings-toggle { margin-left: 8px; }
+    .theme-toggle:hover {
+      color: var(--text); border-color: var(--accent-border); background: var(--accent-bg);
+    }
+    .theme-toggle svg { width: 18px; height: 18px; }
+
+    /* Native settings dialog */
+    .settings-dialog {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 0; margin: auto;
+      max-width: 520px; width: calc(100% - 32px);
+      color: var(--text);
+    }
+    .settings-dialog::backdrop {
+      background: light-dark(rgba(0,0,0,0.3), rgba(0,0,0,0.6));
+      backdrop-filter: blur(4px);
+    }
+    .settings-dialog-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 18px 22px; border-bottom: 1px solid var(--border);
+    }
+    .settings-dialog-title {
+      font-family: var(--font-body); font-size: 16px; font-weight: 600;
+      color: var(--text); margin: 0;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .settings-dialog-title svg { width: 18px; height: 18px; color: var(--accent); }
+    .settings-dialog-close {
+      background: none; border: none; color: var(--text-faint);
+      cursor: pointer; font-size: 22px; line-height: 1;
+      padding: 4px 10px; border-radius: 6px;
+    }
+    .settings-dialog-close:hover { background: var(--surface-hover); color: var(--text); }
+    .settings-dialog-body { padding: 20px 22px 22px; }
+
+    /* Help popovers */
+    .help-icon {
+      background: none; border: none; color: var(--text-faint);
+      cursor: pointer; font-size: 13px; padding: 0 4px; margin-left: 4px;
+      vertical-align: middle; line-height: 1;
+    }
+    .help-icon:hover { color: var(--text-muted); }
+    .help-popover {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 12px 14px;
+      max-width: 300px;
+      font-family: var(--font-body); font-size: 12px; line-height: 1.55;
+      color: var(--text); margin: 0;
+      box-shadow: 0 8px 24px light-dark(rgba(0,0,0,0.12), rgba(0,0,0,0.4));
+    }
+    .help-popover strong {
+      display: block; font-size: 13px; margin-bottom: 6px;
+      color: var(--text); font-weight: 600;
+    }
+    .help-popover p { margin: 0; color: var(--text-muted); }
+
+    /* Focus rings — keyboard only */
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    [role="switch"]:focus-visible,
+    [role="tab"]:focus-visible,
+    a:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+      border-radius: 4px;
+    }
+
+    /* Container queries — per-component responsiveness */
+    .summary-grid { container-type: inline-size; container-name: summary; }
+    @container summary (max-width: 700px) { .summary-grid { grid-template-columns: 1fr 1fr; } }
+    @container summary (max-width: 480px) { .summary-grid { grid-template-columns: 1fr; } }
+
+    .bc-chart-card { container-type: inline-size; container-name: chart; }
+    @container chart (max-width: 500px) { .bc-chart-container { height: 200px; } }
+
+    /* :has()-driven active state for usage rows (progressive enhancement) */
+    .usage-row:has(.toggle.on) {
+      background: var(--accent-bg);
+      border-color: var(--accent-border);
+      opacity: 1;
+    }
+    .usage-row:not(:has(.toggle.on)) { opacity: 0.5; }
+
+    /* View Transitions */
+    @view-transition { navigation: auto; }
+    ::view-transition-old(root),
+    ::view-transition-new(root) { animation-duration: 0.3s; }
+    @media (prefers-reduced-motion: reduce) {
+      @view-transition { navigation: none; }
+    }
+
+    /* Live region for screen readers */
+    .visually-hidden {
+      position: absolute; left: -9999px;
+      width: 1px; height: 1px; overflow: hidden;
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    /* Print */
+    @media print {
+      html { color-scheme: light; }
+      body {
+        background: white !important; background-image: none !important; color: #000;
+      }
+      .settings-toggle, .theme-toggle, .help-icon,
+      .tab-close, .tab-add, .back-to-lobby,
+      .bc-toggle, .ai-card, .help-popover,
+      .bc-advanced-toggle {
+        display: none !important;
+      }
+      .card, .bc-section, .ai-card {
+        break-inside: avoid;
+        border: 1px solid #ccc !important;
+        background: white !important;
+      }
+    }
+</style>
 </head>
 <body>
 
@@ -542,6 +913,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.3.1/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.3.1/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
 
 <script>
 "use strict";
@@ -653,7 +1025,7 @@ const TEMPLATES = [
     usages:{ streaming_ci:{ active:true, volume:2000000, freq:365, growth:0.15 }, streaming_actions:{ active:true, volume:500000, freq:365, growth:0.15 }, data_queries:{ active:true, volume:1000000, freq:365, growth:0.10 } } },
   { templateId:"data_foundation", category:"getting_started", name:"Data Foundation / CDP Setup",
     description:"Establish a unified customer data platform by ingesting external data, resolving identities, and creating foundational segments. The baseline for any Data 360 implementation.",
-    usages:{ ext_pipeline:{ active:true, volume:5000000, freq:365, growth:0.05 }, profile_unification:{ active:true, volume:3000000, freq:12, growth:0.05 }, segmentation:{ active:true, volume:3000000, freq:52, growth:0.05 } } },
+    usages:{ ext_pipeline:{ active:true, volume:5000000, freq:365, growth:0.05, shared:true }, profile_unification:{ active:true, volume:3000000, freq:12, growth:0.05, shared:true }, segmentation:{ active:true, volume:3000000, freq:52, growth:0.05, shared:true } } },
   { templateId:"ai_service_agents", category:"getting_started", name:"AI-Powered Service Agents",
     description:"Ground Agentforce service agents in unified customer data. Agents query profiles, run inferences for case classification, and trigger follow-up actions in real-time.",
     usages:{ inferences:{ active:true, volume:200000, freq:365, growth:0.20 }, data_queries:{ active:true, volume:5000000, freq:365, growth:0.20 }, streaming_actions:{ active:true, volume:100000, freq:365, growth:0.20 } } },
@@ -668,7 +1040,7 @@ const TEMPLATES = [
     usages:{ ext_pipeline:{ active:true, volume:10000000, freq:12, growth:0.05 }, profile_unification:{ active:true, volume:10000000, freq:12, growth:0.05 }, data_queries:{ active:true, volume:20000000, freq:12, growth:0.05 } } },
   { templateId:"cross_cloud_activation", category:"advanced", name:"Cross-Cloud Activation",
     description:"Compares the cost of activating segments to different Salesforce clouds \u2014 daily batch sync to Marketing Cloud for campaigns vs. streaming activation to Sales/Service Cloud for real-time agent actions. Helps decide which audiences need the expensive \u2018fast lane\u2019 and which can use scheduled batch delivery.",
-    usages:{ segmentation:{ active:true, volume:5000000, freq:365, growth:0.05 }, batch_activation:{ active:true, volume:2000000, freq:365, growth:0.05 }, activate_dmo:{ active:true, volume:500000, freq:365, growth:0.10 }, streaming_actions:{ active:true, volume:200000, freq:365, growth:0.10 } } },
+    usages:{ segmentation:{ active:true, volume:5000000, freq:365, growth:0.05, shared:true }, batch_activation:{ active:true, volume:2000000, freq:365, growth:0.05 }, activate_dmo:{ active:true, volume:500000, freq:365, growth:0.10 }, streaming_actions:{ active:true, volume:200000, freq:365, growth:0.10 } } },
   { templateId:"rag_unstructured", category:"advanced", name:"RAG & Unstructured Data for AI",
     description:"Ingestion, processing, and indexing of unstructured documents (PDF service reports, call transcripts, knowledge articles) for use with Prompt Builder, Einstein Copilot, or Agentforce. Makes the cost of Retrieval Augmented Generation (RAG) plannable \u2014 an area often missed in traditional credit estimates.",
     usages:{ ext_pipeline:{ active:true, volume:2000000, freq:52, growth:0.15 }, inferences:{ active:true, volume:1000000, freq:365, growth:0.20 }, data_queries:{ active:true, volume:5000000, freq:365, growth:0.20 }, streaming_actions:{ active:true, volume:500000, freq:365, growth:0.15 } } },
@@ -790,13 +1162,109 @@ function analyzeUseCase(description, key) {
   });
 }
 
+function buildGuidedSystemPrompt() {
+  var availableTypes = RATE_CARD.map(function(rc) {
+    return rc.id + ": " + rc.name + " (" + rc.rate + " credits per " + rc.unit + ") \u2014 " + rc.desc;
+  }).join("\n");
+  return "You are an expert Salesforce Data 360 (formerly Data Cloud) architect helping a user configure a credit consumption estimate. Your task is to gather enough information through 3 to 5 targeted questions, then provide a structured configuration.\n\n" +
+    "Available usage types:\n" + availableTypes + "\n\n" +
+    "Behavior rules:\n" +
+    "- Start by asking the most important missing piece of information based on the user's initial description.\n" +
+    "- Ask ONE question at a time. Be concise. Each question should be one or two sentences max.\n" +
+    "- Focus questions on information that affects the configuration: customer base size, data sources, frequency requirements, real-time vs batch needs, expected growth.\n" +
+    "- After 3 to 5 questions, OR when you have enough information to make confident estimates, respond with the final configuration.\n" +
+    "- Do NOT ask redundant questions. If the user already mentioned customer base size in their initial description, do not ask again.\n\n" +
+    "Response format:\n" +
+    "- If you need more information: respond with a single question in plain text. No JSON, no markdown.\n" +
+    "- If you have enough information: respond with ONLY a JSON object in the exact schema below. No preamble, no explanation, no markdown backticks.\n\n" +
+    "JSON schema (when ready to configure):\n" +
+    "{\n" +
+    "  \"ready\": true,\n" +
+    "  \"name\": \"Short use case name (3-5 words)\",\n" +
+    "  \"usages\": {\n" +
+    "    \"<usage_type_id>\": {\n" +
+    "      \"active\": true,\n" +
+    "      \"volume\": <absolute number of rows/inferences per execution, NOT in millions>,\n" +
+    "      \"freq\": <1, 4, 12, 52, 365, or 730>,\n" +
+    "      \"growth\": <decimal YoY growth rate, e.g. 0.05>\n" +
+    "    }\n" +
+    "  }\n" +
+    "}\n\n" +
+    "Rules for the final configuration:\n" +
+    "- volume must be the ABSOLUTE number, not in millions. Example: 120,000 rows = volume: 120000, NOT 0.12.\n" +
+    "- Choose frequencies that match real business rhythm, not always monthly.\n" +
+    "- Only include usage types that are clearly needed.\n" +
+    "- Realistic volumes for the customer base size the user described.";
+}
+
+function tryParseFinalConfig(text) {
+  try {
+    var clean = text.replace(/```json\s*/g, "").replace(/```\s*/g, "").trim();
+    var obj = JSON.parse(clean);
+    if (obj && obj.ready === true && obj.usages && typeof obj.usages === "object") return obj;
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function normalizeAIConfig(config) {
+  if (!config || typeof config !== "object") throw new Error("AI response was not a valid object");
+  if (!config.usages || typeof config.usages !== "object") throw new Error("AI response missing usages");
+  var validIds = RATE_CARD.map(function(rc){ return rc.id; });
+  var filtered = {};
+  Object.keys(config.usages).forEach(function(k) {
+    if (validIds.indexOf(k) === -1) { console.warn("[AI] Unknown usage type, skipping:", k); return; }
+    var u = config.usages[k];
+    if (!u || typeof u !== "object") return;
+    filtered[k] = {
+      active: u.active !== false,
+      volume: Number(u.volume) || 0,
+      freq: Number(u.freq) || 365,
+      growth: Number(u.growth) || 0.05
+    };
+    if (filtered[k].volume > 0 && filtered[k].volume < 1000) filtered[k].volume = Math.round(filtered[k].volume * 1000000);
+  });
+  if (Object.keys(filtered).length === 0) throw new Error("AI did not select any valid usage types");
+  return { name: String(config.name || "AI-configured use case"), usages: filtered };
+}
+
 /* ── Components ────────────────────────────────────────── */
 
 function Toggle(props) {
   var cls = "toggle" + (props.on ? " on" : "");
-  return e("button", { className:cls, onClick:props.onClick, "aria-label":"Toggle" },
+  return e("button", {
+    className: cls,
+    onClick: props.onClick,
+    role: "switch",
+    "aria-checked": props.on ? "true" : "false",
+    "aria-label": props.label || "Toggle",
+    type: "button"
+  },
     e("div", { className:"toggle-dot" })
   );
+}
+
+function HelpPopover(props) {
+  var id = props.id;
+  return [
+    e("button", {
+      key: "btn",
+      type: "button",
+      className: "help-icon",
+      popovertarget: id,
+      "aria-label": "Help: " + props.label
+    }, "\u24D8"),
+    e("div", {
+      key: "pop",
+      id: id,
+      popover: "auto",
+      className: "help-popover"
+    },
+      e("strong", null, props.label),
+      e("p", null, props.text)
+    )
+  ];
 }
 
 function UsageRow(props) {
@@ -804,7 +1272,7 @@ function UsageRow(props) {
   var infoOpen = props.infoOpen, onInfoToggle = props.onInfoToggle;
   return e("div", { className: "usage-row" + (active ? " active" : "") },
     e("div", { className:"usage-header" },
-      e(Toggle, { on:active, onClick:function(){ props.onToggle(rc.id); } }),
+      e(Toggle, { on:active, onClick:function(){ props.onToggle(rc.id); }, label:(active?"Deactivate ":"Activate ")+rc.name }),
       e("div", { style:{ flex:1 } },
         e("div", { className:"usage-name" }, rc.name),
         e("div", { className:"usage-desc" }, rc.desc),
@@ -851,6 +1319,16 @@ function UsageRow(props) {
           e("span", { className:"pct-sign" }, "%")
         )
       )
+    ),
+    active && e("div", { className:"shared-toggle-row" },
+      e(Toggle, { on: !!st.shared, onClick: function(){ props.onToggleShared(rc.id); }, label:(st.shared?"Unshare ":"Share ")+rc.name+" across use cases" }),
+      e("div", { className:"shared-toggle-text" },
+        e("div", { className:"shared-toggle-label" }, "Shared across use cases"),
+        e("div", { className:"shared-toggle-desc" }, "Count this once globally, using the max volume")
+      )
+    ),
+    active && props.sharedHintVisible && e("div", { className:"shared-hint-banner" },
+      "Shared usage types are counted once in the global total, using the maximum volume across all use cases that mark them as shared. Individual use case totals still show the full cost as if this use case ran alone."
     )
   );
 }
@@ -895,6 +1373,26 @@ function BreakdownBar(props) {
   );
 }
 
+function BCChart(props) {
+  var ref = React.useRef(null);
+  var chartRef = React.useRef(null);
+  var signature = props.signature;
+  var config = props.config;
+  React.useEffect(function() {
+    if (!ref.current || typeof Chart === "undefined") return;
+    if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; }
+    try {
+      chartRef.current = new Chart(ref.current, config);
+    } catch (err) {
+      console.error("[BC Chart] error:", err);
+    }
+    return function() {
+      if (chartRef.current) { chartRef.current.destroy(); chartRef.current = null; }
+    };
+  }, [signature]);
+  return e("div", { className:"bc-chart-container" }, e("canvas", { ref:ref }));
+}
+
 /* ── Main App ──────────────────────────────────────────── */
 
 function App() {
@@ -910,11 +1408,25 @@ function App() {
   /* ── Use-case state ───────────────────────────────────── */
   function freshUsages() {
     var u = {};
-    RATE_CARD.forEach(function(rc){ u[rc.id] = { active:false, volume:1000000, freq:365, growth:0.05 }; });
+    RATE_CARD.forEach(function(rc){ u[rc.id] = { active:false, volume:1000000, freq:365, growth:0.05, shared:false }; });
     return u;
   }
+  function withViewTransition(fn) {
+    if (typeof document !== "undefined" && typeof document.startViewTransition === "function") {
+      document.startViewTransition(fn);
+    } else {
+      fn();
+    }
+  }
+  function withBenefitDefaults(uc) {
+    return Object.assign({
+      benefitConservative: 50000,
+      benefitRealistic: 150000,
+      benefitOptimistic: 300000
+    }, uc);
+  }
   var _nextId = React.useRef(2);
-  var _ucs = React.useState([{ id:1, name:"", usages:freshUsages() }]);
+  var _ucs = React.useState([withBenefitDefaults({ id:1, name:"", usages:freshUsages() })]);
   var useCases = _ucs[0], setUseCases = _ucs[1];
   var _at = React.useState(1);
   var activeTab = _at[0], setActiveTab = _at[1];
@@ -924,20 +1436,40 @@ function App() {
   var _st = React.useState(false), showTemplates = _st[0], setShowTemplates = _st[1];
   var _ak = React.useState(function(){ try { return localStorage.getItem("d360_api_key")||""; } catch(e){ return ""; } });
   var apiKey = _ak[0], setApiKey = _ak[1];
-  var _ss = React.useState(false), showSettings = _ss[0], setShowSettings = _ss[1];
+  var settingsDialogRef = React.useRef(null);
+  var _theme = React.useState(function(){
+    try { return localStorage.getItem("data360-theme") || "system"; } catch(e) { return "system"; }
+  });
+  var theme = _theme[0], setTheme = _theme[1];
+  var _liveMsg = React.useState(""), liveMsg = _liveMsg[0], setLiveMsg = _liveMsg[1];
   var _akDraft = React.useState(""), apiKeyDraft = _akDraft[0], setApiKeyDraft = _akDraft[1];
   var _keyStatus = React.useState(null), keyStatus = _keyStatus[0], setKeyStatus = _keyStatus[1];
   var _keyError = React.useState(false), keyError = _keyError[0], setKeyError = _keyError[1];
   var _aiP = React.useState(""), aiPrompt = _aiP[0], setAiPrompt = _aiP[1];
   var _aiL = React.useState(false), aiLoading = _aiL[0], setAiLoading = _aiL[1];
   var _aiE = React.useState(null), aiError = _aiE[0], setAiError = _aiE[1];
+  var _aiM = React.useState("quick"), aiMode = _aiM[0], setAiMode = _aiM[1];
+  var _conv = React.useState([]), conversation = _conv[0], setConversation = _conv[1];
+  var _gI = React.useState(""), guidedInit = _gI[0], setGuidedInit = _gI[1];
+  var _gA = React.useState(""), guidedAnswer = _gA[0], setGuidedAnswer = _gA[1];
+  var _seenSh = React.useState(false), seenSharedHint = _seenSh[0], setSeenSharedHint = _seenSh[1];
+  var _shHint = React.useState(null), sharedHintForId = _shHint[0], setSharedHintForId = _shHint[1];
+  var _bcExp = React.useState(false), bcExpanded = _bcExp[0], setBcExpanded = _bcExp[1];
+  var _bcAdv = React.useState(false), bcAdvancedOpen = _bcAdv[0], setBcAdvancedOpen = _bcAdv[1];
+  var _impl = React.useState(120000), implementationCost = _impl[0], setImplementationCost = _impl[1];
+  var _lic = React.useState(40000), licenseCost = _lic[0], setLicenseCost = _lic[1];
+  var _int = React.useState(0), internalCost = _int[0], setInternalCost = _int[1];
+  var _r1 = React.useState(40), rampY1 = _r1[0], setRampY1 = _r1[1];
+  var _r2 = React.useState(80), rampY2 = _r2[0], setRampY2 = _r2[1];
+  var _r3 = React.useState(100), rampY3 = _r3[0], setRampY3 = _r3[1];
+  var _disc = React.useState(8), discountRate = _disc[0], setDiscountRate = _disc[1];
 
   var activeUC = useCases.find(function(uc){ return uc.id === activeTab; }) || useCases[0];
   if (!activeUC || !activeUC.usages) activeUC = { id:0, name:"", usages:freshUsages() };
 
   function addBlankUseCase() {
     var newId = _nextId.current++;
-    setUseCases(function(prev){ return prev.concat([{ id:newId, name:"Use Case "+newId, usages:freshUsages() }]); });
+    setUseCases(function(prev){ return prev.concat([withBenefitDefaults({ id:newId, name:"Use Case "+newId, usages:freshUsages() })]); });
     setActiveTab(newId);
     setShowTemplates(false);
     setTimeout(function(){ if(nameRef.current) nameRef.current.focus(); }, 0);
@@ -948,7 +1480,7 @@ function App() {
     Object.keys(tpl.usages).forEach(function(k) {
       if (usages[k]) usages[k] = Object.assign({}, usages[k], tpl.usages[k]);
     });
-    setUseCases(function(prev){ return prev.concat([{ id:newId, name:tpl.name, usages:usages, fromTemplate:tpl.name, showTemplateBanner:true }]); });
+    setUseCases(function(prev){ return prev.concat([withBenefitDefaults({ id:newId, name:tpl.name, usages:usages, fromTemplate:tpl.name, showTemplateBanner:true })]); });
     setActiveTab(newId);
     setShowTemplates(false);
     setTimeout(function(){ if(nameRef.current) nameRef.current.focus(); }, 0);
@@ -962,29 +1494,35 @@ function App() {
     });
   }
   function lobbySelectTemplate(tpl) {
-    var newId = _nextId.current++;
-    var usages = freshUsages();
-    Object.keys(tpl.usages).forEach(function(k) {
-      if (usages[k]) usages[k] = Object.assign({}, usages[k], tpl.usages[k]);
+    withViewTransition(function() {
+      var newId = _nextId.current++;
+      var usages = freshUsages();
+      Object.keys(tpl.usages).forEach(function(k) {
+        if (usages[k]) usages[k] = Object.assign({}, usages[k], tpl.usages[k]);
+      });
+      setUseCases([withBenefitDefaults({ id:newId, name:tpl.name, usages:usages, fromTemplate:tpl.name, showTemplateBanner:true })]);
+      setActiveTab(newId);
+      setView("workspace");
     });
-    setUseCases([{ id:newId, name:tpl.name, usages:usages, fromTemplate:tpl.name, showTemplateBanner:true }]);
-    setActiveTab(newId);
-    setView("workspace");
   }
   function lobbyStartBlank() {
-    var newId = _nextId.current++;
-    setUseCases([{ id:newId, name:"", usages:freshUsages() }]);
-    setActiveTab(newId);
-    setView("workspace");
+    withViewTransition(function() {
+      var newId = _nextId.current++;
+      setUseCases([withBenefitDefaults({ id:newId, name:"", usages:freshUsages() })]);
+      setActiveTab(newId);
+      setView("workspace");
+    });
     setTimeout(function(){ if(nameRef.current) nameRef.current.focus(); }, 0);
   }
   function handleBackToLobby() {
     if (!window.confirm("This will reset all use cases and start fresh. Continue?")) return;
-    _nextId.current = 2;
-    setUseCases([{ id:1, name:"", usages:freshUsages() }]);
-    setActiveTab(1);
-    setShowTemplates(false);
-    setView("lobby");
+    withViewTransition(function() {
+      _nextId.current = 2;
+      setUseCases([withBenefitDefaults({ id:1, name:"", usages:freshUsages() })]);
+      setActiveTab(1);
+      setShowTemplates(false);
+      setView("lobby");
+    });
   }
   function handleAISubmit(isLobby) {
     if (!apiKey) { openSettings(); return; }
@@ -1007,7 +1545,7 @@ function App() {
           if (u.active && u.volume === 0) u.volume = 100000;
         });
         var newId = _nextId.current++;
-        var newUC = { id:newId, name:String(config.name||"AI-configured use case"), usages:merged, fromTemplate:"AI-configured", showTemplateBanner:true };
+        var newUC = withBenefitDefaults({ id:newId, name:String(config.name||"AI-configured use case"), usages:merged, fromTemplate:"AI-configured", showTemplateBanner:true });
         setActiveTab(newId);
         if (isLobby) { setUseCases([newUC]); } else { setUseCases(function(prev){ return prev.concat([newUC]); }); }
         setShowTemplates(false);
@@ -1023,6 +1561,107 @@ function App() {
       setAiError(err.message || "Something went wrong. Please try again.");
       setAiLoading(false);
     });
+  }
+  function resetGuided() {
+    setConversation([]); setGuidedInit(""); setGuidedAnswer(""); setAiError(null);
+  }
+  function callGuidedAPI(isLobby, conv) {
+    setAiLoading(true); setAiError(null);
+    var messagesToSend = conv;
+    var assistantCount = conv.filter(function(m){ return m.role === "assistant"; }).length;
+    if (assistantCount >= 7 && conv.length && conv[conv.length-1].role === "user") {
+      var last = conv[conv.length-1];
+      messagesToSend = conv.slice(0, -1).concat([{
+        role: "user",
+        content: last.content + "\n\n(Please provide the final configuration now even if you'd ask more questions.)"
+      }]);
+      console.log("[AI Debug] Appending final-config hint after 7 assistant turns");
+    }
+    console.log("[AI Debug] Guided turn \u2192 sending", messagesToSend.length, "messages");
+    fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify({
+        model: "claude-sonnet-4-5-20250929",
+        max_tokens: 1024,
+        system: buildGuidedSystemPrompt(),
+        messages: messagesToSend
+      })
+    }).then(function(resp) {
+      if (!resp.ok) {
+        return resp.json().catch(function(){ return {}; }).then(function(b){
+          throw new Error(b.error ? b.error.message : "API request failed (HTTP " + resp.status + ")");
+        });
+      }
+      return resp.json();
+    }).then(function(data) {
+      var text = data.content.filter(function(b){ return b.type === "text"; }).map(function(b){ return b.text; }).join("");
+      console.log("[AI Debug] Guided response:", text.slice(0, 160) + (text.length > 160 ? "\u2026" : ""));
+      var finalConfig = tryParseFinalConfig(text);
+      if (finalConfig) {
+        try {
+          var normalized = normalizeAIConfig(finalConfig);
+          var merged = freshUsages();
+          Object.keys(normalized.usages).forEach(function(k) {
+            if (merged[k]) merged[k] = Object.assign({}, merged[k], normalized.usages[k]);
+          });
+          var hasActive = Object.keys(merged).some(function(k){ return merged[k].active; });
+          if (!hasActive) {
+            setAiError("AI did not configure any usage types. Try a more specific description.");
+            setAiLoading(false);
+            return;
+          }
+          Object.keys(merged).forEach(function(k) {
+            var u = merged[k];
+            if (u.active && u.volume === 0) u.volume = 100000;
+          });
+          var newId = _nextId.current++;
+          var newUC = withBenefitDefaults({ id:newId, name:normalized.name, usages:merged, fromTemplate:"AI-configured", showTemplateBanner:true });
+          setActiveTab(newId);
+          if (isLobby) { setUseCases([newUC]); } else { setUseCases(function(prev){ return prev.concat([newUC]); }); }
+          setShowTemplates(false);
+          setView("workspace");
+          setAiLoading(false);
+          resetGuided();
+        } catch (ex) {
+          console.error("[AI] Config processing error:", ex);
+          setAiError("Failed to process AI response: " + ex.message);
+          setAiLoading(false);
+        }
+      } else {
+        setConversation(function(prev){ return prev.concat([{ role:"assistant", content:text }]); });
+        setAiLoading(false);
+      }
+    }).catch(function(err) {
+      console.error("[AI] Guided request error:", err);
+      setAiError(err.message || "Something went wrong. Please try again.");
+      setAiLoading(false);
+    });
+  }
+  function startGuidedSession(isLobby) {
+    if (!apiKey) { openSettings(); return; }
+    var msg = guidedInit.trim();
+    if (!msg) return;
+    var newConv = [{ role:"user", content:msg }];
+    setConversation(newConv);
+    callGuidedAPI(isLobby, newConv);
+  }
+  function continueGuided(isLobby) {
+    var msg = guidedAnswer.trim();
+    if (!msg) return;
+    var newConv = conversation.concat([{ role:"user", content:msg }]);
+    setConversation(newConv);
+    setGuidedAnswer("");
+    callGuidedAPI(isLobby, newConv);
+  }
+  function retryGuided(isLobby) {
+    if (!conversation.length) return;
+    callGuidedAPI(isLobby, conversation);
   }
   function deleteUseCase(id) {
     if (useCases.length <= 1) return;
@@ -1040,6 +1679,31 @@ function App() {
       });
     });
   }
+  function updateUCBenefit(ucId, field, val) {
+    setUseCases(function(prev) {
+      return prev.map(function(uc) {
+        if (uc.id !== ucId) return uc;
+        var upd = {}; upd[field] = val;
+        return Object.assign({}, uc, upd);
+      });
+    });
+  }
+  function fmtBigCost(n, sym) {
+    if (!isFinite(n)) return "\u2013";
+    var abs = Math.abs(n);
+    var sign = n < 0 ? "-" : "";
+    var s = sym || "$";
+    if (abs >= 1e6) return sign + s + (abs/1e6).toFixed(2) + "M";
+    if (abs >= 1e3) return sign + s + Math.round(abs/1e3) + "K";
+    return sign + s + Math.round(abs);
+  }
+  function fmtPaybackMonths(m) {
+    if (m === null || m === undefined) return "Never within 3y";
+    if (m <= 12) return m + " months";
+    var years = Math.floor(m/12);
+    var rem = m % 12;
+    return rem === 0 ? years + " years" : years + "y " + rem + "m";
+  }
   function toggle(usageId) {
     setUseCases(function(prev) {
       return prev.map(function(uc) {
@@ -1049,6 +1713,25 @@ function App() {
         return Object.assign({}, uc, { usages:next });
       });
     });
+  }
+  function toggleShared(usageId) {
+    var current = activeUC.usages[usageId];
+    var enabling = !(current && current.shared);
+    setUseCases(function(prev) {
+      return prev.map(function(uc) {
+        if (uc.id !== activeTab) return uc;
+        var next = Object.assign({}, uc.usages);
+        next[usageId] = Object.assign({}, next[usageId], { shared:!next[usageId].shared });
+        return Object.assign({}, uc, { usages:next });
+      });
+    });
+    if (enabling && !seenSharedHint) {
+      setSeenSharedHint(true);
+      setSharedHintForId(usageId);
+      setTimeout(function() {
+        setSharedHintForId(function(prev){ return prev === usageId ? null : prev; });
+      }, 8000);
+    }
   }
   function change(usageId, field, val) {
     setUseCases(function(prev) {
@@ -1077,7 +1760,7 @@ function App() {
         var y3 = y2 * (1 + st.growth);
         var cr = [y1,y2,y3].map(function(v){ return (v/1e6)*rc.rate; });
         var co = cr.map(function(c){ return (c/1e5)*costPer100K; });
-        results.push({ name:rc.name, cat:rc.cat, credits:cr, costs:co });
+        results.push({ id:rc.id, name:rc.name, cat:rc.cat, credits:cr, costs:co, shared:!!st.shared });
       });
       var t = { credits:[0,0,0], costs:[0,0,0] };
       results.forEach(function(r) {
@@ -1087,13 +1770,119 @@ function App() {
     });
   }, [useCases, testVol, testRuns, costPer100K]);
 
-  var globalTotals = React.useMemo(function() {
-    var t = { credits:[0,0,0], costs:[0,0,0] };
+  /* Global totals deduplicate shared usage types: for each rate-card type,
+     the shared bucket contributes once using the entry with the highest Y1
+     credits (monotonic with volume*freq). Test volume and growth from that
+     same max entry are reused, since the shared infrastructure is built once. */
+  var globalAgg = React.useMemo(function() {
+    var dedup = { credits:[0,0,0], costs:[0,0,0] };
+    var naive = { credits:[0,0,0], costs:[0,0,0] };
+    var hasShared = false;
     allCalcs.forEach(function(uc) {
-      for (var i=0;i<3;i++) { t.credits[i]+=uc.totals.credits[i]; t.costs[i]+=uc.totals.costs[i]; }
+      for (var i=0;i<3;i++) { naive.credits[i]+=uc.totals.credits[i]; naive.costs[i]+=uc.totals.costs[i]; }
     });
-    return t;
+    RATE_CARD.forEach(function(rc) {
+      var sharedEntries = [];
+      var nonSharedEntries = [];
+      allCalcs.forEach(function(uc) {
+        uc.results.forEach(function(r) {
+          if (r.id !== rc.id) return;
+          if (r.shared) sharedEntries.push(r); else nonSharedEntries.push(r);
+        });
+      });
+      if (sharedEntries.length) {
+        hasShared = true;
+        var maxEntry = sharedEntries[0];
+        sharedEntries.forEach(function(r) { if (r.credits[0] > maxEntry.credits[0]) maxEntry = r; });
+        for (var i=0;i<3;i++) { dedup.credits[i]+=maxEntry.credits[i]; dedup.costs[i]+=maxEntry.costs[i]; }
+      }
+      nonSharedEntries.forEach(function(r) {
+        for (var i=0;i<3;i++) { dedup.credits[i]+=r.credits[i]; dedup.costs[i]+=r.costs[i]; }
+      });
+    });
+    return { totals: dedup, naive: naive, hasShared: hasShared };
   }, [allCalcs]);
+
+  var globalTotals = globalAgg.totals;
+
+  /* Business Case: month-by-month cost & benefit over 36 months per scenario.
+     Cost is split into one-time implementation (m=1), monthly platform+internal,
+     and monthly credit cost derived from the already shared-aware globalAgg.
+     Benefit ramps by year and is split into Conservative/Realistic/Optimistic. */
+  var businessCase = React.useMemo(function() {
+    var scenarios = ["conservative", "realistic", "optimistic"];
+    var benefitKey = { conservative:"benefitConservative", realistic:"benefitRealistic", optimistic:"benefitOptimistic" };
+    var ramps = [Math.max(0,rampY1)/100, Math.max(0,rampY2)/100, Math.max(0,rampY3)/100];
+    // Monthly credits cost per year derived from globalAgg (shared-aware).
+    var creditCostPerYearMonthly = [0,0,0];
+    for (var y=0;y<3;y++) {
+      var annual = (globalAgg.totals.credits[y] / 1e5) * Math.max(0, costPer100K);
+      creditCostPerYearMonthly[y] = annual / 12;
+    }
+    var monthlyPlatform = Math.max(0, licenseCost) / 12 + Math.max(0, internalCost) / 12;
+    var oneTime = Math.max(0, implementationCost);
+
+    // Annual benefits summed across UCs per scenario.
+    var totalsPerScenario = {};
+    scenarios.forEach(function(s) {
+      var sum = 0;
+      useCases.forEach(function(uc) {
+        var v = Number(uc[benefitKey[s]]);
+        if (isFinite(v) && v > 0) sum += v;
+      });
+      totalsPerScenario[s] = sum;
+    });
+
+    var result = {};
+    scenarios.forEach(function(s) {
+      var cumulative = [];
+      var monthlyCosts = [];
+      var monthlyBenefits = [];
+      var npv = 0;
+      var paybackMonth = null;
+      var totalCost = 0;
+      var totalBenefit = 0;
+      for (var m=1; m<=36; m++) {
+        var yearIdx = Math.ceil(m/12) - 1;
+        var implPart = (m === 1) ? oneTime : 0;
+        var cost = implPart + monthlyPlatform + creditCostPerYearMonthly[yearIdx];
+        var benefit = (totalsPerScenario[s] * ramps[yearIdx]) / 12;
+        var net = benefit - cost;
+        totalCost += cost;
+        totalBenefit += benefit;
+        monthlyCosts.push(cost);
+        monthlyBenefits.push(benefit);
+        var prev = m === 1 ? 0 : cumulative[m-2];
+        var cum = prev + net;
+        cumulative.push(cum);
+        var disc = Math.pow(1 + Math.max(0, discountRate)/100, m/12);
+        npv += net / disc;
+        if (paybackMonth === null && cum >= 0 && (totalsPerScenario[s] > 0)) paybackMonth = m;
+      }
+      var roi = totalCost > 0 ? ((totalBenefit - totalCost) / totalCost) * 100 : 0;
+      result[s] = {
+        cumulative: cumulative,
+        monthlyCosts: monthlyCosts,
+        monthlyBenefits: monthlyBenefits,
+        npv: npv,
+        paybackMonth: paybackMonth,
+        roi: roi,
+        totalCost: totalCost,
+        totalBenefit: totalBenefit
+      };
+    });
+
+    // Annual costs / benefits for realistic scenario.
+    var annual = [{cost:0,benefit:0},{cost:0,benefit:0},{cost:0,benefit:0}];
+    for (var i=0;i<36;i++) {
+      var y = Math.ceil((i+1)/12) - 1;
+      annual[y].cost += result.realistic.monthlyCosts[i];
+      annual[y].benefit += result.realistic.monthlyBenefits[i];
+    }
+    result.annual = annual;
+    result.hasAnyBenefit = scenarios.some(function(s){ return totalsPerScenario[s] > 0; });
+    return result;
+  }, [useCases, globalAgg, costPer100K, implementationCost, licenseCost, internalCost, rampY1, rampY2, rampY3, discountRate]);
 
   var emptyCalc = { id:0, name:"", results:[], totals:{ credits:[0,0,0], costs:[0,0,0] } };
   var activeCalc = allCalcs.find(function(c){ return c.id === activeTab; }) || allCalcs[0] || emptyCalc;
@@ -1106,26 +1895,65 @@ function App() {
         e("div", { className:"logo", dangerouslySetInnerHTML:{ __html:'<svg width="34" height="34" viewBox="-40 -40 80 80"><defs><linearGradient id="lg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#00d2d2"/><stop offset="100%" stop-color="#0088ff"/></linearGradient></defs><ellipse cx="0" cy="0" rx="30" ry="30" fill="none" stroke="url(#lg)" stroke-width="3"/><circle cx="0" cy="0" r="16" fill="rgba(0,210,210,0.08)"/><text x="0" y="5" text-anchor="middle" font-family="Helvetica Neue,sans-serif" font-size="13" font-weight="700" fill="#00d2d2">360</text><circle cx="26" cy="-14" r="3" fill="#0088ff"/><circle cx="-8" cy="29" r="2.5" fill="#00d2d2"/><circle cx="-28" cy="-9" r="2" fill="#7c4dff"/></svg>' } }),
         e("div", null,
           e("h1", null, "Data 360 Credit Calculator"),
-          e("div", { className:"subtitle" }, "Based on official Salesforce Data Services Rate Card (Aug 2025) \u00b7 v2.1")
+          e("div", { className:"subtitle" }, "Based on official Salesforce Data Services Rate Card (Aug 2025) \u00b7 v2.2")
         ),
-        e("button", { className:"settings-toggle", onClick:openSettings },
+        e("button", {
+          className:"theme-toggle",
+          onClick:cycleTheme,
+          "aria-label":"Theme: " + theme + " (click to cycle)",
+          title:"Theme: " + theme
+        },
+          theme === "light"
+            ? e("svg", { viewBox:"0 0 24 24", fill:"none", stroke:"currentColor", strokeWidth:"2", strokeLinecap:"round", strokeLinejoin:"round" },
+                e("circle", { cx:"12", cy:"12", r:"4" }),
+                e("path", { d:"M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" })
+              )
+            : theme === "dark"
+              ? e("svg", { viewBox:"0 0 24 24", fill:"none", stroke:"currentColor", strokeWidth:"2", strokeLinecap:"round", strokeLinejoin:"round" },
+                  e("path", { d:"M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" })
+                )
+              : e("svg", { viewBox:"0 0 24 24", fill:"none", stroke:"currentColor", strokeWidth:"2", strokeLinecap:"round", strokeLinejoin:"round" },
+                  e("circle", { cx:"12", cy:"12", r:"9" }),
+                  e("path", { d:"M12 3a9 9 0 0 0 0 18z", fill:"currentColor" })
+                )
+        ),
+        e("button", { className:"settings-toggle", onClick:openSettings, "aria-label":"Open settings" },
           e("svg", { width:"18", height:"18", viewBox:"0 0 24 24", fill:"none", stroke:"currentColor", strokeWidth:"2", strokeLinecap:"round", strokeLinejoin:"round" },
             e("circle", { cx:"12", cy:"12", r:"3" }),
             e("path", { d:"M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" })
           ),
-          apiKey && e("span", { className:"key-indicator" })
+          apiKey && e("span", { className:"key-indicator", "aria-label":"API key set" })
         )
       )
     )
   );
 
   React.useEffect(function() {
-    function onKey(ev) { if (ev.key === "Escape" && showSettings) closeSettings(); }
-    document.addEventListener("keydown", onKey);
-    return function() { document.removeEventListener("keydown", onKey); };
-  }, [showSettings]);
-  function openSettings() { setApiKeyDraft(apiKey); setKeyStatus(null); setKeyError(false); setShowSettings(true); }
-  function closeSettings() { setShowSettings(false); }
+    if (theme === "system") {
+      document.documentElement.removeAttribute("data-theme");
+      try { localStorage.removeItem("data360-theme"); } catch(e) {}
+    } else {
+      document.documentElement.setAttribute("data-theme", theme);
+      try { localStorage.setItem("data360-theme", theme); } catch(e) {}
+    }
+  }, [theme]);
+
+  React.useEffect(function() {
+    var t = setTimeout(function() {
+      setLiveMsg("Total cost in year one: " + fmtCost(globalTotals.costs[0], currency) + ".");
+    }, 1500);
+    return function() { clearTimeout(t); };
+  }, [globalTotals.costs[0], currency]);
+  function cycleTheme() {
+    setTheme(function(t){ return t === "system" ? "light" : (t === "light" ? "dark" : "system"); });
+  }
+  function openSettings() {
+    setApiKeyDraft(apiKey); setKeyStatus(null); setKeyError(false);
+    if (settingsDialogRef.current && !settingsDialogRef.current.open) settingsDialogRef.current.showModal();
+  }
+  function closeSettings() {
+    if (settingsDialogRef.current && settingsDialogRef.current.open) settingsDialogRef.current.close();
+  }
   function saveKey() {
     var k = apiKeyDraft.trim();
     if (!k.startsWith("sk-ant-")) { setKeyError(true); return; }
@@ -1138,23 +1966,28 @@ function App() {
     setApiKey(""); setApiKeyDraft(""); setKeyStatus("removed");
   }
 
-  var settingsModal = e("div", {
-    className:"modal-overlay"+(showSettings?" visible":""),
-    onClick:function(ev){ if(ev.target===ev.currentTarget) closeSettings(); }
+  var settingsModal = e("dialog", {
+    ref: settingsDialogRef,
+    className: "settings-dialog",
+    "aria-labelledby": "settings-dialog-title"
   },
-    e("div", { className:"modal" },
-      e("div", { className:"modal-title" },
+    e("div", { className:"settings-dialog-header" },
+      e("h2", { id:"settings-dialog-title", className:"settings-dialog-title" },
         e("svg", { viewBox:"0 0 24 24", fill:"none", stroke:"currentColor", strokeWidth:"2", strokeLinecap:"round", strokeLinejoin:"round" },
           e("rect", { x:"3", y:"11", width:"18", height:"11", rx:"2" }),
           e("path", { d:"M7 11V7a5 5 0 0 1 10 0v4" })
         ),
-        "API Key Settings"
+        "API key settings"
       ),
+      e("button", { className:"settings-dialog-close", onClick:closeSettings, "aria-label":"Close settings" }, "\u00d7")
+    ),
+    e("div", { className:"settings-dialog-body" },
       e("div", { className:"modal-text" }, "The AI-powered use case configuration requires an Anthropic API key. Your key is stored in your browser\u2019s LocalStorage and sent directly to Anthropic\u2019s API \u2014 never to our servers."),
       e("div", { className:"modal-text" }, e("strong", null, "Cost: "), "Approximately $0.01\u20130.03 per analysis, billed directly by Anthropic to your account."),
       e("div", { className:"modal-input-group" },
-        e("label", { className:"modal-label" }, "Anthropic API Key"),
+        e("label", { className:"modal-label", htmlFor:"settings-apikey" }, "Anthropic API key"),
         e("input", {
+          id:"settings-apikey",
           className:"modal-input"+(keyError?" error":""), type:"password",
           placeholder:"sk-ant-...", autoComplete:"off",
           value:apiKeyDraft, onChange:function(ev){ setApiKeyDraft(ev.target.value); setKeyError(false); }
@@ -1162,14 +1995,308 @@ function App() {
         e("div", { className:"modal-error"+(keyError?" visible":"") }, "API key must start with sk-ant-")
       ),
       e("div", { className:"modal-actions" },
-        e("button", { className:"btn-primary", onClick:saveKey }, "Save Key Locally"),
-        apiKey && e("button", { className:"btn-ghost", onClick:removeKey }, "Remove Key"),
+        e("button", { className:"btn-primary", onClick:function(){ saveKey(); } }, "Save key locally"),
+        apiKey && e("button", { className:"btn-ghost", onClick:removeKey }, "Remove key"),
         e("button", { className:"btn-ghost", onClick:closeSettings }, "Close")
       ),
       keyStatus && e("div", { className:"modal-status visible "+keyStatus },
         keyStatus === "success" ? "API key saved to LocalStorage." : "API key removed from LocalStorage."
       ),
       e("a", { className:"modal-link", href:"https://console.anthropic.com/", target:"_blank", rel:"noopener" }, "Get an API key at console.anthropic.com \u2197")
+    )
+  );
+
+  /* ── Business Case section ────────────────────────────── */
+  var bcHasData = globalAgg.totals.credits[0] > 0 || implementationCost > 0 || licenseCost > 0 || internalCost > 0;
+  var bcReal = businessCase.realistic;
+  var months = []; for (var __m=1; __m<=36; __m++) months.push("M"+__m);
+
+  function bcMoneyInput(value, setter, step) {
+    return e("div", { className:"bc-money-wrap" },
+      e("span", { className:"bc-money-sign" }, currency),
+      e("input", {
+        type:"number", className:"input", value:value, min:0,
+        step: step || 1000,
+        onChange:function(ev){
+          var n = Number(ev.target.value);
+          setter(isFinite(n) && n >= 0 ? n : 0);
+        }
+      })
+    );
+  }
+  function bcPctInput(value, setter) {
+    return e("div", { className:"pct-wrap" },
+      e("input", {
+        type:"number", className:"input", value:value, step:1, min:0,
+        onChange:function(ev){
+          var n = Number(ev.target.value);
+          setter(isFinite(n) && n >= 0 ? n : 0);
+        }
+      }),
+      e("span", { className:"pct-sign" }, "%")
+    );
+  }
+
+  function readThemeChartColors() {
+    /* getComputedStyle returns the raw `light-dark(...)` string for unregistered
+       custom properties, which Chart.js cannot parse. Detect the active theme
+       in JS and return resolved RGBA values instead. */
+    try {
+      var attr = document.documentElement.getAttribute("data-theme");
+      var isDark = attr === "dark"
+        || (!attr && typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      /* Two separate concerns:
+         - textMuted: tick labels + legend, must be clearly readable.
+         - gridSubtle: gridline color, stays decorative/subtle. */
+      return isDark ? {
+        text: "#e8eaed",
+        textMuted: "rgba(255,255,255,0.55)",
+        faint: "rgba(255,255,255,0.3)",
+        border: "rgba(255,255,255,0.06)",
+        gridSubtle: "rgba(255,255,255,0.06)",
+        markerStroke: "#0a0e17"
+      } : {
+        text: "#1a1a1a",
+        textMuted: "rgba(0,0,0,0.55)",
+        faint: "rgba(0,0,0,0.4)",
+        border: "rgba(0,0,0,0.06)",
+        gridSubtle: "rgba(0,0,0,0.06)",
+        markerStroke: "#fafaf7"
+      };
+    } catch (e) {
+      return { text:"#e8eaed", textMuted:"rgba(255,255,255,0.55)", faint:"rgba(255,255,255,0.3)", border:"rgba(255,255,255,0.06)", gridSubtle:"rgba(255,255,255,0.06)", markerStroke:"#0a0e17" };
+    }
+  }
+
+  var paybackMarkerPlugin = {
+    id: "paybackMarker",
+    afterDatasetsDraw: function(chart, args, opts) {
+      if (!opts || !opts.month) return;
+      var datasets = chart.data.datasets || [];
+      var idx = -1;
+      for (var i=0;i<datasets.length;i++) { if (datasets[i].label === "Realistic") { idx = i; break; } }
+      if (idx < 0) return;
+      var meta = chart.getDatasetMeta(idx);
+      var point = meta && meta.data && meta.data[opts.month - 1];
+      if (!point) return;
+      var ctx = chart.ctx, x = point.x, y = point.y;
+      var stroke = opts.stroke || "#0a0e17";
+      var label = "Payback \u00b7 M" + opts.month;
+      ctx.save();
+      ctx.fillStyle = "#ff9800";
+      ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI*2); ctx.fill();
+      ctx.lineWidth = 2; ctx.strokeStyle = stroke; ctx.stroke();
+      ctx.font = "600 11px 'DM Sans', sans-serif";
+      var tw = ctx.measureText(label).width;
+      var pad = 6, lx = x + 10, ly = y - 22;
+      if (lx + tw + pad*2 > chart.chartArea.right) lx = x - tw - pad*2 - 10;
+      if (ly < chart.chartArea.top + 4) ly = y + 12;
+      ctx.fillStyle = "#ff9800";
+      ctx.beginPath();
+      if (ctx.roundRect) ctx.roundRect(lx, ly, tw + pad*2, 18, 4);
+      else ctx.rect(lx, ly, tw + pad*2, 18);
+      ctx.fill();
+      ctx.fillStyle = "#1a1a1a";
+      ctx.textBaseline = "middle";
+      ctx.fillText(label, lx + pad, ly + 9);
+      ctx.restore();
+    }
+  };
+  var chartTheme = readThemeChartColors();
+  var cumulativeChartSig = theme + "|" + currency + "|" + bcReal.cumulative.join(",") + "|" + businessCase.conservative.cumulative.join(",") + "|" + businessCase.optimistic.cumulative.join(",");
+  var annualChartSig = theme + "|" + currency + "|" + businessCase.annual.map(function(a){ return a.cost+":"+a.benefit; }).join(",");
+
+  var cumulativeChartConfig = {
+    type: "line",
+    data: {
+      labels: months,
+      datasets: [
+        { label:"Conservative", data:businessCase.conservative.cumulative, borderColor:"#888780", backgroundColor:"rgba(136,135,128,0.1)", borderDash:[2,3], borderWidth:1.5, pointRadius:0, tension:0.15 },
+        { label:"Realistic",    data:bcReal.cumulative,                    borderColor:"#185FA5", backgroundColor:"#185FA5",                borderWidth:2,                                   pointRadius:0, tension:0.15, fill:false },
+        { label:"Optimistic",   data:businessCase.optimistic.cumulative,   borderColor:"#85B7EB", backgroundColor:"rgba(133,183,235,0.1)",  borderDash:[6,4], borderWidth:1.5, pointRadius:0, tension:0.15 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: false,
+      plugins: {
+        legend: { display:true, position:"bottom", labels:{ color:chartTheme.textMuted, boxWidth:12, boxHeight:12, font:{ family:"DM Sans", size:11 } } },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) {
+              return ctx.dataset.label + ": " + fmtBigCost(ctx.parsed.y, currency);
+            },
+            title: function(items) { return items[0] ? "Month " + (items[0].dataIndex + 1) : ""; }
+          }
+        },
+        paybackMarker: { month: bcReal.paybackMonth, stroke: chartTheme.markerStroke }
+      },
+      scales: {
+        x: {
+          grid: { display:false, drawTicks:false },
+          border: { display:false },
+          ticks: {
+            color:chartTheme.textMuted, font:{ family:"JetBrains Mono", size:10 },
+            callback: function(val, idx) { return ((idx+1) % 6 === 0) ? "M" + (idx+1) : ""; },
+            maxRotation: 0, autoSkip: false
+          }
+        },
+        y: {
+          grid: { color:chartTheme.gridSubtle, drawTicks:false },
+          border: { display:false },
+          ticks: {
+            color:chartTheme.textMuted, font:{ family:"JetBrains Mono", size:10 },
+            callback: function(val) { return fmtBigCost(val, currency); }
+          }
+        }
+      }
+    },
+    plugins: [paybackMarkerPlugin]
+  };
+
+  var annualChartConfig = {
+    type: "bar",
+    data: {
+      labels: ["Year 1", "Year 2", "Year 3"],
+      datasets: [
+        { label:"Cost",    data:businessCase.annual.map(function(a){ return a.cost; }),    backgroundColor:"#888780", borderRadius:4 },
+        { label:"Benefit", data:businessCase.annual.map(function(a){ return a.benefit; }), backgroundColor:"#185FA5", borderRadius:4 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false, animation: false,
+      plugins: {
+        legend: { display:true, position:"bottom", labels:{ color:chartTheme.textMuted, boxWidth:12, boxHeight:12, font:{ family:"DM Sans", size:11 } } },
+        tooltip: {
+          callbacks: {
+            label: function(ctx) { return ctx.dataset.label + ": " + fmtBigCost(ctx.parsed.y, currency); }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: { display:false, drawTicks:false },
+          border: { display:false },
+          ticks: { color:chartTheme.textMuted, font:{ family:"DM Sans", size:11 } }
+        },
+        y: {
+          grid: { color:chartTheme.gridSubtle, drawTicks:false },
+          border: { display:false },
+          ticks: {
+            color:chartTheme.textMuted, font:{ family:"JetBrains Mono", size:10 },
+            callback: function(val) { return fmtBigCost(val, currency); }
+          }
+        }
+      }
+    }
+  };
+
+  var bcSection = e("div", { className:"bc-section" },
+    e("div", { className:"bc-header", onClick:function(){ setBcExpanded(!bcExpanded); } },
+      e("div", { className:"bc-header-content" },
+        e("div", { className:"bc-header-title" },
+          "Business Case",
+          e("span", { className:"bc-beta-badge" }, "Beta")
+        ),
+        e("div", { className:"bc-header-sub" }, "Estimate ROI, payback period, and net value over 3 years")
+      ),
+      e("button", { className:"bc-toggle", onClick:function(ev){ ev.stopPropagation(); setBcExpanded(!bcExpanded); } },
+        bcExpanded ? "\u25B2 Hide" : "\u25BC Show"
+      )
+    ),
+    bcExpanded && e("div", { className:"bc-body" },
+      e("div", { className:"bc-disclaimer" },
+        e("strong", null, "Business case estimates depend on assumptions you provide below."),
+        " Use Conservative / Realistic / Optimistic ranges to model uncertainty. This is not a replacement for a formal financial business case \u2014 adjust all values to match your context before sharing with stakeholders."
+      ),
+
+      e("div", { className:"bc-section-heading" }, "Implementation & Platform"),
+      e("div", { className:"bc-input-grid-3" },
+        e("div", null,
+          e("label", { className:"label" }, "One-time implementation cost"),
+          bcMoneyInput(implementationCost, setImplementationCost, 5000)
+        ),
+        e("div", null,
+          e("label", { className:"label" }, "Annual platform / license cost"),
+          bcMoneyInput(licenseCost, setLicenseCost, 1000)
+        ),
+        e("div", null,
+          e("label", { className:"label" }, "Annual internal team cost"),
+          bcMoneyInput(internalCost, setInternalCost, 1000)
+        )
+      ),
+
+      e("div", { className:"bc-section-heading" }, "Expected Annual Benefits per Use Case"),
+      e("div", null,
+        e("div", { className:"bc-uc-benefit-row head" },
+          e("div", null, "Use Case"),
+          e("div", { className:"right" }, "Conservative"),
+          e("div", { className:"right" }, "Realistic"),
+          e("div", { className:"right" }, "Optimistic")
+        ),
+        useCases.map(function(uc) {
+          return e("div", { key:uc.id, className:"bc-uc-benefit-row" },
+            e("div", { className:"bc-uc-name", title:uc.name||("Use Case "+uc.id) }, uc.name||("Use Case "+uc.id)),
+            e("div", null, bcMoneyInput(uc.benefitConservative||0, function(v){ updateUCBenefit(uc.id, "benefitConservative", v); }, 1000)),
+            e("div", null, bcMoneyInput(uc.benefitRealistic||0,    function(v){ updateUCBenefit(uc.id, "benefitRealistic",    v); }, 1000)),
+            e("div", null, bcMoneyInput(uc.benefitOptimistic||0,   function(v){ updateUCBenefit(uc.id, "benefitOptimistic",   v); }, 1000))
+          );
+        })
+      ),
+
+      e("div", { className:"bc-section-heading" }, "Ramp-up & Discount"),
+      e("button", { className:"bc-advanced-toggle", onClick:function(){ setBcAdvancedOpen(!bcAdvancedOpen); } },
+        bcAdvancedOpen ? "\u25BE Hide advanced settings" : "\u25B8 Show advanced settings"
+      ),
+      bcAdvancedOpen && e("div", { className:"bc-advanced-grid" },
+        e("div", null,
+          e("label", { className:"label" }, "Year 1 ramp"),
+          bcPctInput(rampY1, setRampY1)
+        ),
+        e("div", null,
+          e("label", { className:"label" }, "Year 2 ramp"),
+          bcPctInput(rampY2, setRampY2)
+        ),
+        e("div", null,
+          e("label", { className:"label" }, "Year 3 ramp"),
+          bcPctInput(rampY3, setRampY3)
+        ),
+        e("div", null,
+          e("label", { className:"label" }, "Discount rate"),
+          bcPctInput(discountRate, setDiscountRate)
+        )
+      ),
+
+      !bcHasData && e("div", { className:"bc-empty", style:{ marginTop:20 } },
+        "Configure at least one use case and set implementation costs to see your business case."
+      ),
+
+      bcHasData && e("div", { className:"bc-metrics-grid" },
+        e("div", { className:"bc-metric" },
+          e("div", { className:"bc-metric-label" }, "Payback"),
+          e("div", { className:"bc-metric-value" }, fmtPaybackMonths(bcReal.paybackMonth)),
+          e("div", { className:"bc-metric-sub" }, "Realistic scenario")
+        ),
+        e("div", { className:"bc-metric" },
+          e("div", { className:"bc-metric-label" }, "3-Year ROI"),
+          e("div", { className:"bc-metric-value" + (bcReal.roi < 0 ? " negative" : "") }, Math.round(bcReal.roi) + "%"),
+          e("div", { className:"bc-metric-sub" }, "Net of all costs")
+        ),
+        e("div", { className:"bc-metric" },
+          e("div", { className:"bc-metric-label" }, "Net Value 3Y"),
+          e("div", { className:"bc-metric-value" + (bcReal.npv < 0 ? " negative" : "") }, fmtBigCost(bcReal.npv, currency)),
+          e("div", { className:"bc-metric-sub" }, "NPV at " + discountRate + "%")
+        )
+      ),
+
+      bcHasData && e("div", { className:"bc-chart-card" },
+        e("div", { className:"bc-chart-label" }, "Cumulative Net Value over 36 months"),
+        e(BCChart, { config:cumulativeChartConfig, signature:cumulativeChartSig })
+      ),
+
+      bcHasData && e("div", { className:"bc-chart-card" },
+        e("div", { className:"bc-chart-label" }, "Annual Costs vs Benefits (Realistic)"),
+        e(BCChart, { config:annualChartConfig, signature:annualChartSig })
+      )
     )
   );
 
@@ -1233,19 +2360,15 @@ function App() {
     );
   }
 
-  function renderAICard(isLobby) {
-    return e("div", { className:"ai-card" },
-      e("div", { className:"ai-card-header" },
-        e("span", { className:"ai-card-sparkle" }, "\u2728"),
-        e("div", { className:"ai-card-name" }, "Describe your use case")
-      ),
-      e("div", { className:"ai-card-desc" }, "Tell us what you want to achieve with Data 360 in plain language. AI will configure the calculator for you."),
+  function renderQuickModeBody(isLobby) {
+    return [
+      e("div", { className:"ai-card-desc", key:"d" }, "Tell us what you want to achieve with Data 360 in plain language. AI will configure the calculator for you."),
       e("textarea", {
-        className:"ai-textarea", disabled:aiLoading,
+        key:"t", className:"ai-textarea", disabled:aiLoading,
         value:aiPrompt, onChange:function(ev){ setAiPrompt(ev.target.value); },
         placeholder:"e.g. \"We want to proactively contact 3 million customers whose lease expires within 90 days. Customer data comes from SAP and Service Cloud. We need daily scoring and weekly segment activation to Marketing Cloud for email campaigns.\""
       }),
-      e("div", { className:"ai-actions" },
+      e("div", { className:"ai-actions", key:"a" },
         apiKey
           ? e("button", { className:"btn-ai", disabled:aiLoading||!aiPrompt.trim(), onClick:function(){ handleAISubmit(isLobby); } },
               aiLoading && e("div", { className:"spinner" }),
@@ -1258,7 +2381,91 @@ function App() {
             : e("span", null, "Requires an Anthropic API key \u2192 Set up in ", e("a", { onClick:openSettings }, "\u2699 Settings"))
         )
       ),
-      aiError && e("div", { className:"ai-error" }, aiError)
+      aiError && e("div", { className:"ai-error", key:"e" }, aiError)
+    ];
+  }
+  function renderGuidedModeBody(isLobby) {
+    if (!apiKey) {
+      return [
+        e("div", { className:"ai-card-desc", key:"d" }, "Answer 3 to 5 short follow-up questions and Claude will build the configuration step by step."),
+        e("div", { className:"ai-actions", key:"a" },
+          e("button", { className:"btn-ai", onClick:openSettings }, "Set up API key first"),
+          e("div", { className:"ai-hint" },
+            e("span", null, "Requires an Anthropic API key \u2192 Set up in ", e("a", { onClick:openSettings }, "\u2699 Settings"))
+          )
+        )
+      ];
+    }
+    if (conversation.length === 0) {
+      return [
+        e("div", { className:"ai-card-desc", key:"d" }, "Start by describing your use case in one sentence. Claude will ask follow-up questions to refine the configuration."),
+        e("textarea", {
+          key:"t", className:"ai-textarea", disabled:aiLoading,
+          value:guidedInit, onChange:function(ev){ setGuidedInit(ev.target.value); },
+          placeholder:"e.g. \"We want to do lead scoring for our B2B sales team.\""
+        }),
+        e("div", { className:"ai-actions", key:"a" },
+          e("button", { className:"btn-ai", disabled:aiLoading||!guidedInit.trim(), onClick:function(){ startGuidedSession(isLobby); } },
+            aiLoading && e("div", { className:"spinner" }),
+            aiLoading ? "Starting..." : "Start guided session"
+          ),
+          e("div", { className:"ai-hint" }, "Powered by Claude")
+        )
+      ];
+    }
+    var lastTurn = conversation[conversation.length - 1];
+    var awaitingAnswer = !aiLoading && !aiError && lastTurn && lastTurn.role === "assistant";
+    return [
+      e("div", { key:"conv" },
+        conversation.map(function(turn, i) {
+          var firstUser = turn.role === "user" && i === 0;
+          var label = turn.role === "assistant"
+            ? "Claude"
+            : (firstUser ? "Your description" : "Your answer");
+          return e("div", { key:i, className:"conv-turn " + turn.role },
+            e("div", { className:"conv-turn-label" }, label),
+            e("div", { className:"conv-turn-content" }, turn.content)
+          );
+        })
+      ),
+      aiLoading && e("div", { key:"think", className:"guided-thinking" },
+        e("div", { className:"spinner" }),
+        e("span", null, "Thinking\u2026")
+      ),
+      aiError && e("div", { key:"err", className:"ai-error" }, aiError),
+      aiError && e("div", { key:"err-actions", className:"guided-actions" },
+        e("button", { className:"btn-ai", onClick:function(){ retryGuided(isLobby); } }, "Retry"),
+        e("button", { className:"btn-ghost", onClick:resetGuided }, "Start over")
+      ),
+      awaitingAnswer && e("textarea", {
+        key:"answer", className:"ai-textarea",
+        value:guidedAnswer, onChange:function(ev){ setGuidedAnswer(ev.target.value); },
+        placeholder:"Your answer\u2026"
+      }),
+      awaitingAnswer && e("div", { key:"ans-actions", className:"guided-actions" },
+        e("button", { className:"btn-ai", disabled:!guidedAnswer.trim(), onClick:function(){ continueGuided(isLobby); } }, "Continue"),
+        e("button", { className:"btn-ghost", onClick:resetGuided }, "Start over"),
+        e("div", { className:"ai-hint", style:{ marginLeft:"auto" } }, "Powered by Claude")
+      )
+    ];
+  }
+  function renderAICard(isLobby) {
+    return e("div", { className:"ai-card" },
+      e("div", { className:"ai-card-header" },
+        e("span", { className:"ai-card-sparkle" }, "\u2728"),
+        e("div", { className:"ai-card-name" }, "Describe your use case")
+      ),
+      e("div", { className:"ai-mode-tabs" },
+        e("button", {
+          className:"ai-mode-tab" + (aiMode==="quick"?" active":""),
+          onClick:function(){ setAiMode("quick"); }
+        }, "Quick (one prompt)"),
+        e("button", {
+          className:"ai-mode-tab" + (aiMode==="guided"?" active":""),
+          onClick:function(){ setAiMode("guided"); }
+        }, "Guided (with questions)")
+      ),
+      aiMode === "quick" ? renderQuickModeBody(isLobby) : renderGuidedModeBody(isLobby)
     );
   }
 
@@ -1346,9 +2553,22 @@ function App() {
 
       /* Global summary cards */
       e("div", { className:"summary-grid" },
-        e(SummaryCard, { label:"Total Credits", vals:globalTotals.credits, fmt:fmtCr, accent:"linear-gradient(90deg,#00d2d2,#0088ff)" }),
-        e(SummaryCard, { label:"Total Cost (at "+currency+costPer100K.toLocaleString()+" / 100K credits)", vals:globalTotals.costs, fmt:function(n){ return fmtCost(n, currency); }, accent:"linear-gradient(90deg,#0088ff,#7c4dff)" })
+        e(SummaryCard, {
+          label: ["Total credits", e(HelpPopover, { key:"h", id:"help-total-credits", label:"Total credits", text:"Sum of credits consumed across active use cases. Shared usage types are counted once globally using the maximum volume across use cases that mark them as shared." })],
+          vals:globalTotals.credits, fmt:fmtCr,
+          accent:"linear-gradient(90deg,#00d2d2,#0088ff)"
+        }),
+        e(SummaryCard, {
+          label: ["Total cost (at "+currency+costPer100K.toLocaleString()+" / 100K credits)", e(HelpPopover, { key:"h", id:"help-total-cost", label:"Total cost", text:"Calculated by multiplying total credits by your cost per 100K credits. Currency is set in the top bar." })],
+          vals:globalTotals.costs, fmt:function(n){ return fmtCost(n, currency); },
+          accent:"linear-gradient(90deg,#0088ff,#7c4dff)"
+        })
       ),
+      e("div", {
+        className:"visually-hidden",
+        "aria-live":"polite",
+        "aria-atomic":"true"
+      }, liveMsg),
 
       /* Use-case comparison table */
       useCases.length > 1 && e("div", { className:"card", style:{ marginBottom:14 } },
@@ -1381,6 +2601,14 @@ function App() {
               )
             )
           )
+        ),
+        globalAgg.hasShared && e("div", { className:"shared-sum-note", style:{ marginTop:12, marginBottom:0 } },
+          e("strong", null, "Total reflects shared usage types counted once"),
+          " (max volume across use cases). Sum of individual use case totals would be: ",
+          fmtCr(globalAgg.naive.credits[0]),
+          " credits / ",
+          fmtCost(globalAgg.naive.costs[0], currency),
+          "."
         )
       ),
 
@@ -1397,16 +2625,22 @@ function App() {
       ),
 
       /* Tab bar */
-      e("div", { className:"tabs" },
+      e("div", { className:"tabs", role:"tablist", "aria-label":"Use cases" },
         useCases.map(function(uc) {
           return e("button", {
             key:uc.id,
+            role:"tab",
+            id:"usecase-tab-"+uc.id,
+            "aria-selected": uc.id===activeTab ? "true" : "false",
+            "aria-controls":"usecase-panel-"+uc.id,
+            tabIndex: uc.id===activeTab ? 0 : -1,
             className:"tab"+(uc.id===activeTab?" active":""),
             onClick:function(){ setActiveTab(uc.id); setShowTemplates(false); }
           },
             e("span", null, uc.name || "Use Case "+uc.id),
             useCases.length > 1 && e("button", {
               className:"tab-close",
+              "aria-label":"Delete "+(uc.name||"Use Case "+uc.id),
               onClick:function(ev){ ev.stopPropagation(); deleteUseCase(uc.id); }
             }, "\u00d7")
           );
@@ -1478,8 +2712,9 @@ function App() {
           items.map(function(rc) {
             return e(UsageRow, {
               key:rc.id, rc:rc, state:activeUC.usages[rc.id],
-              onToggle:toggle, onChange:change,
-              infoOpen:infoOpen===rc.id, onInfoToggle:toggleInfo
+              onToggle:toggle, onChange:change, onToggleShared:toggleShared,
+              infoOpen:infoOpen===rc.id, onInfoToggle:toggleInfo,
+              sharedHintVisible:sharedHintForId===rc.id
             });
           })
         );
@@ -1503,10 +2738,14 @@ function App() {
             ),
             e("tbody", null,
               activeCalc.results.map(function(r) {
+                var costCls = r.shared ? "right shared-cost" : "right";
                 return e("tr", { key:r.name },
-                  e("td", { className:"name" }, r.name),
+                  e("td", { className:"name" },
+                    r.name,
+                    r.shared && e("span", { className:"shared-badge" }, "\u00b7 shared")
+                  ),
                   r.credits.map(function(c,i){ return e("td",{key:"c"+i,className:"right accent"},fmtCr(c)); }),
-                  r.costs.map(function(c,i){ return e("td",{key:"$"+i,className:"right"},fmtCost(c,currency)); })
+                  r.costs.map(function(c,i){ return e("td",{key:"$"+i,className:costCls},fmtCost(c,currency)); })
                 );
               }),
               e("tr", { className:"total" },
@@ -1518,6 +2757,8 @@ function App() {
           )
         )
       ),
+
+      !showTemplates && bcSection,
 
       rateCardEl,
       footerEl
