@@ -19,6 +19,7 @@ This calculator helps architects, consultants, and business users:
 - **Project costs over 3 years** with configurable YoY growth rates and custom currency/pricing
 - **Account for testing overhead** with adjustable test volume and test run parameters
 - **Understand what each usage type means** — Business-friendly explanations, examples, and volume hints for every service
+- **Model the business case (beta)** — Estimate ROI, payback period, and net value over 3 years by comparing implementation/platform costs against expected benefits
 
 ## Rate Card Source
 
@@ -119,6 +120,10 @@ You can configure multiple use cases in parallel (e.g., "Proactive Service" + "L
 - A comparison table showing each use case's contribution
 - Credit distribution breakdown by use case and by usage type
 
+### Business Case (Beta)
+
+Expand the **Business Case** panel below the results to estimate ROI, payback period, and net value over 3 years. Enter one-time implementation cost, annual platform/license cost, and annual internal team cost, plus expected annual benefits per use case. The calculator projects cumulative cost vs. benefit over 36 months under conservative, realistic, and optimistic scenarios.
+
 ### Option 2: Run locally
 
 ```bash
@@ -147,9 +152,7 @@ data360-credit-calculator/
 ├── index.html          # The entire application (single file, zero dependencies)
 ├── README.md           # This file
 ├── LICENSE             # MIT License
-├── CONTRIBUTING.md     # Contribution guidelines
-└── .github/
-    └── FUNDING.yml     # Optional: GitHub Sponsors config
+└── CONTRIBUTING.md     # Contribution guidelines
 ```
 
 The calculator is intentionally built as a **single HTML file** with no build step, no npm dependencies, and no framework overhead beyond React via CDN. This makes it trivially deployable, easy to audit, and simple to fork.
