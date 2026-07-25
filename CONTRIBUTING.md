@@ -42,7 +42,6 @@ When Salesforce publishes updated multipliers:
 - Export to PDF or CSV
 - Translations (German, French, Spanish, etc.)
 - Accessibility improvements
-- Dark/light theme toggle
 
 ### Contributing Templates
 
