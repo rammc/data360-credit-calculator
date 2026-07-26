@@ -19,6 +19,12 @@ When Salesforce publishes updated multipliers:
 3. Update the rate card table in `README.md`
 4. Add a note in your PR referencing the official source and date
 
+A scheduled workflow (**Rate Card Watch**, Mondays 07:00 UTC) compares the
+published Salesforce rate card PDF against a stored baseline and opens an
+issue labeled `rate-card-alert` when it changes. After updating the
+calculator, re-run that workflow with `update_baseline: true` to accept the
+new baseline and close the issue.
+
 ### Code Changes
 
 1. Fork the repository

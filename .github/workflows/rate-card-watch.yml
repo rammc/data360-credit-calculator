@@ -1,0 +1,145 @@
+name: Rate Card Watch
+
+# Watches the official Salesforce Data Services rate card and opens an issue
+# when the published PDF differs from the baseline this calculator was last
+# verified against. It never changes the calculator itself: humans verify the
+# new rates and update RATE_CARD in index.html plus the README table
+# (see CONTRIBUTING.md), then accept the new baseline via workflow_dispatch.
+
+on:
+  schedule:
+    # Mondays 07:00 UTC
+    - cron: "0 7 * * 1"
+  workflow_dispatch:
+    inputs:
+      update_baseline:
+        description: "Accept the currently published rate card as the new baseline"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: rate-card-watch
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install poppler-utils
+        run: sudo apt-get update -q && sudo apt-get install -y -q poppler-utils
+
+      - name: Fetch published rate card
+        id: fetch
+        run: |
+          set -euo pipefail
+          UA="Mozilla/5.0 (compatible; rate-card-watch; +https://github.com/${{ github.repository }})"
+          PAGE_URL="https://www.salesforce.com/data/rates/multipliers/"
+          curl -sSL --max-time 60 -A "$UA" "$PAGE_URL" -o page.html
+
+          # The PDF filename changes between releases, so resolve it from the
+          # page on every run. Prefer links that look like the rate card.
+          mapfile -t PDF_URLS < <(grep -oE 'href="[^"]+\.pdf[^"]*"' page.html | sed 's/^href="//;s/"$//' | sort -u)
+          PDF_URL=""
+          for u in "${PDF_URLS[@]:-}"; do
+            if printf '%s' "$u" | grep -qiE 'datacloud|platform-?services|rate'; then PDF_URL="$u"; break; fi
+          done
+          [ -n "$PDF_URL" ] || PDF_URL="${PDF_URLS[0]:-}"
+          if [ -z "$PDF_URL" ]; then
+            echo "::error::No PDF link found on $PAGE_URL. The page layout may have changed."
+            exit 1
+          fi
+          echo "pdf_url=$PDF_URL" >> "$GITHUB_OUTPUT"
+
+          curl -sSL --max-time 120 -A "$UA" "$PDF_URL" -o ratecard.pdf
+          file ratecard.pdf | grep -qi 'pdf' || { echo "::error::Downloaded file is not a PDF: $PDF_URL"; exit 1; }
+
+          # Normalize the extracted text so that layout jitter between PDF
+          # revisions does not trigger false alarms: collapse whitespace,
+          # drop empty lines. The source URL is part of the tracked state so
+          # that a republished file under a new name is also surfaced.
+          {
+            echo "source: $PDF_URL"
+            pdftotext -layout ratecard.pdf - | tr -s ' \t' ' ' | sed 's/^ //;s/ $//' | grep -v '^$'
+          } > current.txt
+
+      - name: Compare with baseline
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PDF_URL: ${{ steps.fetch.outputs.pdf_url }}
+          UPDATE_BASELINE: ${{ inputs.update_baseline }}
+        run: |
+          set -euo pipefail
+          BASELINE=.github/rate-card-baseline.txt
+
+          commit_baseline() {
+            cp current.txt "$BASELINE"
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add "$BASELINE"
+            git commit -m "$1"
+            git push
+          }
+
+          if [ ! -f "$BASELINE" ]; then
+            commit_baseline "chore: record initial rate card baseline [skip ci]"
+            echo "Baseline created; nothing to compare on this run."
+            exit 0
+          fi
+
+          if [ "$UPDATE_BASELINE" = "true" ]; then
+            if diff -q "$BASELINE" current.txt > /dev/null; then
+              echo "Baseline already matches the published rate card."
+            else
+              commit_baseline "chore: accept published rate card as new baseline [skip ci]"
+            fi
+            exit 0
+          fi
+
+          if diff -u "$BASELINE" current.txt > rate-card.diff; then
+            echo "Published rate card matches the baseline."
+            exit 0
+          fi
+
+          echo "::warning::Published rate card differs from the baseline."
+          EXISTING=$(gh issue list --label rate-card-alert --state open --json number --jq '.[0].number // empty')
+          if [ -n "$EXISTING" ]; then
+            echo "Open alert issue #$EXISTING already exists; not creating another."
+            exit 0
+          fi
+
+          {
+            echo "The Salesforce Data Services rate card published at"
+            echo "<https://www.salesforce.com/data/rates/multipliers/> no longer matches"
+            echo "the baseline this calculator was last verified against."
+            echo
+            echo "Current PDF: $PDF_URL"
+            echo
+            echo "<details><summary>Diff against baseline</summary>"
+            echo
+            echo '```diff'
+            head -c 50000 rate-card.diff
+            echo '```'
+            echo
+            echo "</details>"
+            echo
+            echo "Next steps (see CONTRIBUTING.md):"
+            echo
+            echo "1. Verify the new rates in the linked PDF."
+            echo "2. If multipliers changed, update \`RATE_CARD\` in \`index.html\` and the rate card table in \`README.md\`."
+            echo "3. Re-run the **Rate Card Watch** workflow with \`update_baseline: true\` to accept the new baseline, then close this issue."
+          } > body.md
+
+          gh issue create \
+            --title "Salesforce rate card changed ($(date -u +%Y-%m-%d))" \
+            --body-file body.md \
+            --label rate-card-alert \
+          || gh issue create \
+               --title "Salesforce rate card changed ($(date -u +%Y-%m-%d))" \
+               --body-file body.md
