@@ -1,0 +1,63 @@
+source: https://www.salesforce.com/en-us/wp-content/uploads/sites/4/documents/platform/New-Nov25-DataCloud-PlatformServices.pdf
+Salesforce Customer Data Cloud
+Rate Card
+A quantity of Data Services Credits or Data Services Credits for Sandbox (collectively, “Data Cloud Credits”) is
+included with certain Services as set forth on the applicable Order Form. Data Cloud Credits must be used before the
+Order End Date set forth in the Usage Details table on the Order Form and no rollover will be permitted. Customer
+consumes Data Cloud Credits at the applicable multiplier rate based on the Usage Type identified below.
+Category Usage Type* Unit Production Sandbox
+Batch Streaming Batch Streaming
+Internal Data Pipeline Included (0) Included (0)
+Per 1 Million
+(External) Data Pipeline Rows Processed 2,000 5,000 1,600 4,000
+Per 1 Million
+Data Transforms Rows Processed 400 5,000 320 4,000
+Per 1 MegaByte
+Unstructured Data Processed (MB) Processed 60 48
+Connect,
+Per 1 MegaByte
+Harmonize, and
+Intelligent Processing (MB) Processed 750 600
+Unify
+Data Federation or Sharing Rows Per 1 Million
+Accessed Rows Accessed 70 56
+Data Share Rows Shared (Data Per 1 Million
+Out) Rows Shared 800 640
+Per 1 GigaByte
+Private Connect Data Processed (GB) Processed 500 400
+Per 1 Million
+Profile Unification Rows Processed 100,000 80,000
+Per 1 Million
+E2E Real-Time
+combined Events,
+Processing
+Sub-second Real-Time Events API & Actions 70,000 56,000
+Per 1 Million
+Analyze and Calculated Insights Rows Processed 15 800 12 640
+Predict Per 1 Million
+Inferences Inferences 3,500 2,800
+Per 1 Million
+Data Queries Rows Processed 2 1.6
+Act
+Streaming Actions (including Per 1 Million
+Lookups) Rows Processed 800 640
+ Segment Rows Processed Per 1 Million
+Rows Processed 20 16
+Segmentation
+Batch Activation (with or without Per 1 Million
+and Activation
+related attributes) Rows Processed 10 8
+Activate DMO - Streaming Per 1 Million
+Rows Processed 1600 1280
+Code Extension Per Compute Unit
+Compute
+40 32
+* Usage Types may be updated from time to time.
+Use of any pilot features in conjunction with the Services may consume Data Services Credits, to the extent expressly
+referenced in the applicable pilot terms agreed to by Customer for such pilot.
+Additional information about usage types can be found at:
+https://help.salesforce.com/s/articleView?id=sf.c360_a_data_usage_types.htm&type=5
+Last Updated August 2025. Technical restrictions may apply.
+© 2023 Salesforce, Inc. Salesforce and any Salesforce product names referenced in this document are the trademarks of Salesforce, Inc. The Salesforce Cloud logo and other
+creative assets are owned and protected under copyright and/or trademark law. For more information, please visit www.salesforce.com.
+
