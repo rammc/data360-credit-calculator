@@ -155,7 +155,7 @@ data360-credit-calculator/
 └── CONTRIBUTING.md     # Contribution guidelines
 ```
 
-The calculator is intentionally built as a **single HTML file** with no build step, no npm dependencies, and no framework overhead beyond React via CDN. This makes it trivially deployable, easy to audit, and simple to fork.
+The calculator is intentionally built as a **single HTML file** with no build step, no npm dependencies, and no framework overhead beyond React and Chart.js via CDN. This makes it trivially deployable, easy to audit, and simple to fork.
 
 ## Disclaimer
 
