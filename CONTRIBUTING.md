@@ -36,7 +36,7 @@ new baseline and close the issue.
 ### Design Principles
 
 - **Single file**: The entire app lives in `index.html`. Keep it that way.
-- **No build step**: React via CDN, plain JavaScript, CSS in `<style>`. No npm, no webpack, no transpilation.
+- **No build step**: React and Chart.js via CDN, plain JavaScript, CSS in `<style>`. No npm, no webpack, no transpilation.
 - **Accuracy first**: All rates must match the official Salesforce documentation. If in doubt, don't guess — open an issue instead.
 - **Mobile-friendly**: Test on mobile viewports. The calculator should remain usable on phones.
 
@@ -83,7 +83,7 @@ descriptions produce poor results, you can improve the prompt in the
 - Use `var` (not `let`/`const`) for compatibility with the non-transpiled React approach
 - Use `React.createElement` (aliased as `e`) — no JSX
 - Keep CSS in the `<style>` block, using CSS custom properties
-- Avoid external dependencies beyond React/ReactDOM CDN
+- Avoid external dependencies beyond React/ReactDOM and Chart.js CDN
 
 ## License
 
